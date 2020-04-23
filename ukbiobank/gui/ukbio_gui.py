@@ -39,7 +39,8 @@ class LoadFrame(wx.Frame):
         
         
         self.Show()
-
+        
+    #on_press 'Load CSV'
     def on_press(self, event):
         value = self.my_csv.GetPath()
         if not value:
@@ -48,9 +49,9 @@ class LoadFrame(wx.Frame):
             print(f'You typed: "{value}"')
             #Loading menu...
             self.Close()
-            
             ukb=ukbiobank.ukbio(ukb_csv=value)
             frame = MenuFrame(self, ukb)
+
 
 #Tests to do... try a simple load csv // select fields // output csv ..
 class MenuFrame(wx.Frame, ukbiobank.ukbio):
@@ -59,12 +60,38 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         super().__init__(parent=None, title='UKBiobank-tools menu')
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)        
-        self.text_ctrl = wx.TextCtrl(panel)
-        my_sizer.Add(self.text_ctrl, 0, wx.ALL | wx.EXPAND, 5)        
-        my_btn = wx.Button(panel, label=ukb.csv_path)
-        my_sizer.Add(my_btn, 0, wx.ALL | wx.CENTER, 5)        
+
+        
+        
+        checkbox_btn = wx.Button(panel, label='checkbox_button')
+        checkbox_btn.Bind(wx.EVT_BUTTON,lambda evt, ukb=ukb: self.checkbox_btn(evt, ukb))#for explanation see: https://wiki.wxpython.org/Passing%20Arguments%20to%20Callbacks
+        my_sizer.Add(checkbox_btn, 0, wx.ALL | wx.CENTER, 5)        
         panel.SetSizer(my_sizer)        
         self.Show()
+        
+        
+    def checkbox_btn(self, event, ukb):
+        frame=CheckBoxFrame(self, ukb)
+        
+
+        
+class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
+        
+    def __init__(self, frame, ukb):
+        super().__init__(parent=None, title='UKBiobank-tools checkbox')
+        panel = wx.Panel(self)        
+        my_sizer = wx.BoxSizer(wx.VERTICAL)      
+        
+        
+        
+        checkbox = wx.CheckListBox(panel,choices=ukbiobank.utils.getFieldnames(ukb))
+        
+        
+        my_sizer.Add(checkbox, 0, wx.ALL | wx.EXPAND, 5)                
+        panel.SetSizer(my_sizer)           
+        self.Show()
+
+        
         
      
     
