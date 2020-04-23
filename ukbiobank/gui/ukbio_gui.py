@@ -10,31 +10,66 @@ import pandas as pd
 import re
 
 import wx
-
+import ukbiobank 
 
 
 #wxpython code taken from https://realpython.com/python-gui-with-wxpython/
 def open():    
     app = wx.App()
-    frame = MyFrame()
+    frame = LoadFrame()
     app.MainLoop()
     return
 
     
 
-class MyFrame(wx.Frame):    
+  
+class LoadFrame(wx.Frame):    
     def __init__(self):
-        super().__init__(parent=None, title='Hello World')
-        panel = wx.Panel(self)
-
-        self.text_ctrl = wx.TextCtrl(panel, pos=(5, 5))
-        my_btn = wx.Button(panel, label='Press Me', pos=(5, 55))
-
+        super().__init__(parent=None, title='UKBiobank-tools')
+        panel = wx.Panel(self)        
+        my_sizer = wx.BoxSizer(wx.VERTICAL)        
+        
+        
+        
+        self.my_csv = wx.FilePickerCtrl(panel)
+        my_btn = wx.Button(panel,label='Load CSV')
+        my_btn.Bind(wx.EVT_BUTTON, self.on_press)
+        my_sizer.Add(my_btn, 0, wx.ALL | wx.CENTER, 5)        
+        panel.SetSizer(my_sizer)        
+        
+        
         self.Show()
 
+    def on_press(self, event):
+        value = self.my_csv.GetPath()
+        if not value:
+            print("You didn't enter anything!")
+        else:
+            print(f'You typed: "{value}"')
+            #Loading menu...
+            self.Close()
+            
+            ukb=ukbiobank.ukbio(ukb_csv=value)
+            frame = MenuFrame(self, ukb)
 
+#Tests to do... try a simple load csv // select fields // output csv ..
+class MenuFrame(wx.Frame, ukbiobank.ukbio):
     
-  # return
+    def __init__(self, frame, ukb):
+        super().__init__(parent=None, title='UKBiobank-tools menu')
+        panel = wx.Panel(self)        
+        my_sizer = wx.BoxSizer(wx.VERTICAL)        
+        self.text_ctrl = wx.TextCtrl(panel)
+        my_sizer.Add(self.text_ctrl, 0, wx.ALL | wx.EXPAND, 5)        
+        my_btn = wx.Button(panel, label=ukb.csv_path)
+        my_sizer.Add(my_btn, 0, wx.ALL | wx.CENTER, 5)        
+        panel.SetSizer(my_sizer)        
+        self.Show()
+        
+     
+    
+    
+    
 
 
 #ukbio_utils functions below...
