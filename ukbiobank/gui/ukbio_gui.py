@@ -11,9 +11,11 @@ import re
 
 import wx
 import ukbiobank 
-
+from wx.lib.pubsub import pub 
 
 #wxpython code taken from https://realpython.com/python-gui-with-wxpython/
+
+#Open GUI
 def open():    
     app = wx.App()
     frame = LoadFrame()
@@ -22,7 +24,7 @@ def open():
 
     
 
-  
+#Load path to ukbiobank csv file, initialise ukbiobank.ukbio() object..
 class LoadFrame(wx.Frame):    
     def __init__(self):
         super().__init__(parent=None, title='UKBiobank-tools')
@@ -40,7 +42,7 @@ class LoadFrame(wx.Frame):
         
         self.Show()
         
-    #on_press 'Load CSV'
+    #on_press: load ukb object with csv path
     def on_press(self, event):
         value = self.my_csv.GetPath()
         if not value:
@@ -50,31 +52,45 @@ class LoadFrame(wx.Frame):
             #Loading menu...
             self.Close()
             ukb=ukbiobank.ukbio(ukb_csv=value)
-            frame = MenuFrame(self, ukb)
+            MenuFrame(self, ukb)
+
+
 
 
 #Tests to do... try a simple load csv // select fields // output csv ..
+#MenuFrame: Panel containing all options
 class MenuFrame(wx.Frame, ukbiobank.ukbio):
     
     def __init__(self, frame, ukb):
-        super().__init__(parent=None, title='UKBiobank-tools menu')
+        super().__init__(parent=None,title='UKBiobank-tools menu')
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)        
 
         
-        
-        checkbox_btn = wx.Button(panel, label='checkbox_button')
+        checkbox_btn = wx.Button(panel, label='Select desired variables')
         checkbox_btn.Bind(wx.EVT_BUTTON,lambda evt, ukb=ukb: self.checkbox_btn(evt, ukb))#for explanation see: https://wiki.wxpython.org/Passing%20Arguments%20to%20Callbacks
-        my_sizer.Add(checkbox_btn, 0, wx.ALL | wx.CENTER, 5)        
+        my_sizer.Add(checkbox_btn, 0, wx.ALL | wx.EXPAND, 0) 
+
+  
         panel.SetSizer(my_sizer)        
         self.Show()
         
-        
-    def checkbox_btn(self, event, ukb):
-        frame=CheckBoxFrame(self, ukb)
+        #TODO - Update this to pysub.. (wx.lib.pub is depreciated..)
+        #Subscribing to calls from sub-frames
+        pub.subscribe(self.checkbox_selections, "selectionsListener")
         
 
-        
+    def checkbox_btn(self, event, ukb):
+        CheckBoxFrame(self, ukb)
+        return
+    
+    def checkbox_selections(self, selections, arg4=None):
+        print(selections)
+        return
+
+    
+
+    
 class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
         
     def __init__(self, frame, ukb):
@@ -82,21 +98,40 @@ class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)      
         
+        #print('parent',self.parent)
+        
+        #Variables checkbox
+        self.checkbox = wx.CheckListBox(panel,choices=ukbiobank.utils.getFieldnames(ukb))
+        
+        #Description
+        desc=wx.TextCtrl(panel,value='Select desired variables',style=wx.TE_READONLY)
+        
+        # #Submit button
+        submit=wx.Button(panel,label='Submit')
+        submit.Bind(wx.EVT_BUTTON, self.submit)
         
         
-        checkbox = wx.CheckListBox(panel,choices=ukbiobank.utils.getFieldnames(ukb))
-        
-        
-        my_sizer.Add(checkbox, 0, wx.ALL | wx.EXPAND, 5)                
+        my_sizer.Add(desc, 0, wx.CENTER | wx.EXPAND)
+        my_sizer.Add(self.checkbox, 0, wx.EXPAND)       
+        my_sizer.Add(submit,0, wx.CENTER)
+         
         panel.SetSizer(my_sizer)           
         self.Show()
 
-        
-        
-     
     
+
+
+    #set selections
+    def submit(self, event):
+        #print(self.checkbox.GetCheckedStrings())
+        self.selections=self.checkbox.GetCheckedStrings()
+        pub.sendMessage("selectionsListener", selections=self.selections)
+        self.Close()
+        return 
     
-    
+
+  
+   
 
 
 #ukbio_utils functions below...
