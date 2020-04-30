@@ -383,13 +383,16 @@ def addFields(ukbio=None, df=None, fields=None):
     #convert input to df if not (e.g. if just a series of eids)
     if not isinstance(df,pd.DataFrame):
         df=df.to_frame()
+
     
     #Append 'eid' to list of required fields
-    fields=list(fields)
-    fields.append('eid')
+    if 'eid' not in fields:
+        fields.append('eid')
     
     #get extra fields
     new_df=loadCsv(ukbio,fields=fields)
+        
+    #TODO: Deal with duplicate columns (i.e. same columns may exist in name or id form in input df)
     
     #merge dataframes
     out_df=df.merge(new_df, on='eid', how='inner')
