@@ -123,7 +123,7 @@ def getFieldIdsFromNames(ukbio, field_names=None):
 
     return field_ids
 
-def loadCsv(ukbio, fields=None):
+def loadCsv(ukbio=None, fields=None):
     """
     
     Parameters
@@ -358,6 +358,43 @@ def illnessCodesToText(ukbio=None, df=None):
     
 
     return df_out
+
+
+def addFields(ukbio=None, df=None, fields=None):
+    """
+    
+    Parameters
+    ----------
+    ukbio : ukbio object
+    
+    df: UKbiobank pandas dataframe
+    
+    fields : List of strings, Mandatory
+        Accepts UKB field ID or text string (or mixed), e.g. '21-0.0' or 'Sex'.
+
+
+    Returns
+    -------
+    df : Pandas dataframe
+        df containing all instances of chosen fields.
+
+    """
+    
+    #convert input to df if not (e.g. if just a series of eids)
+    if not isinstance(df,pd.DataFrame):
+        df=df.to_frame()
+    
+    #Append 'eid' to list of required fields
+    fields=list(fields)
+    fields.append('eid')
+    
+    #get extra fields
+    new_df=loadCsv(ukbio,fields=fields)
+    
+    #merge dataframes
+    out_df=df.merge(new_df, on='eid', how='inner')
+    
+    return out_df
 
 # def getFieldname(fieldId=None):
 #     """

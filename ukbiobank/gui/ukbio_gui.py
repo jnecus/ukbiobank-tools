@@ -67,28 +67,59 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         my_sizer = wx.BoxSizer(wx.VERTICAL)        
 
         
+        #Select variables from checkbox
         checkbox_btn = wx.Button(panel, label='Select desired variables')
         checkbox_btn.Bind(wx.EVT_BUTTON,lambda evt, ukb=ukb: self.checkbox_btn(evt, ukb))#for explanation see: https://wiki.wxpython.org/Passing%20Arguments%20to%20Callbacks
         my_sizer.Add(checkbox_btn, 0, wx.ALL | wx.EXPAND, 0) 
+
+        #Print selections
+        view_btn = wx.Button(panel, label='View Selections')
+        view_btn.Bind(wx.EVT_BUTTON, self.selectionsGetter) # to do : add data here as funcationality increases
+        my_sizer.Add(view_btn, 0, wx.ALL | wx.EXPAND, 0) 
+        
+    
+        #Output CSV
+        output_btn = wx.Button(panel, label='Output CSV')
+        my_sizer.Add(output_btn, 0, wx.ALL | wx.EXPAND, 0) 
 
   
         panel.SetSizer(my_sizer)        
         self.Show()
         
-        #TODO - Update this to pysub.. (wx.lib.pub is depreciated..)
-        #Subscribing to calls from sub-frames
-        pub.subscribe(self.checkbox_selections, "selectionsListener")
+
+        
         
 
+
+
+    #Loading variable checkbox frame
     def checkbox_btn(self, event, ukb):
         CheckBoxFrame(self, ukb)
         return
     
-    def checkbox_selections(self, selections, arg4=None):
-        print(selections)
-        return
-
     
+    
+    
+    
+   
+    
+     #Function to gather all options selected
+    def selectionsGetter(self):
+       
+        #Add selections from other frams
+        print(ukb.SELECTIONS)
+        return 
+    
+    
+    # #Viewing all selections
+    # def view_selections(self, event):
+    #     #Presenting variables selected
+    #     SelectionsFrame(self)
+    #     return
+        
+        
+        #Gathering other options selected, e.g. filters . . 
+        
 
     
 class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
@@ -98,7 +129,6 @@ class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)      
         
-        #print('parent',self.parent)
         
         #Variables checkbox
         self.checkbox = wx.CheckListBox(panel,choices=ukbiobank.utils.getFieldnames(ukb))
@@ -108,7 +138,7 @@ class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
         
         # #Submit button
         submit=wx.Button(panel,label='Submit')
-        submit.Bind(wx.EVT_BUTTON, self.submit)
+        submit.Bind(wx.EVT_BUTTON, lambda evt, ukb=ukb: self.submit(evt, ukb))
         
         
         my_sizer.Add(desc, 0, wx.CENTER | wx.EXPAND)
@@ -118,22 +148,42 @@ class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
         panel.SetSizer(my_sizer)           
         self.Show()
 
-    
-
 
     #set selections
-    def submit(self, event):
-        #print(self.checkbox.GetCheckedStrings())
-        self.selections=self.checkbox.GetCheckedStrings()
-        pub.sendMessage("selectionsListener", selections=self.selections)
+    def submit(self, event, ukb):
+        #NEED TO pass this ukb object back . . .?
+        
+        ukb.SELECTIONS=self.checkbox.GetCheckedStrings()
+        print(ukb.SELECTIONS)
         self.Close()
         return 
     
-
-  
+"""
+class SelectionsFrame(wx.Frame):
    
-
-
+    def __init__(self,frame):
+        super().__init__(parent=None, title='Selections..')
+            
+        panel = wx.Panel(self)        
+        my_sizer = wx.BoxSizer(wx.VERTICAL)      
+        
+        #Description
+        desc=wx.TextCtrl(panel,value='here are your selections',style=wx.TE_READONLY)
+        my_sizer.Add(desc, 0, wx.CENTER | wx.EXPAND)
+        
+        
+        #Gather all selections here . . 
+        
+        print(var)
+        #variable selections
+        vars_requested=wx.TextCtrl(panel,value=var,style=wx.TE_READONLY)
+        my_sizer.Add(vars_requested, 0, wx.CENTER | wx.EXPAND)
+        
+        
+         
+        panel.SetSizer(my_sizer)           
+        self.Show()
+"""
 #ukbio_utils functions below...
 
 # def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
