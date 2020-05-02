@@ -123,7 +123,7 @@ def getFieldIdsFromNames(ukbio, field_names=None):
 
     return field_ids
 
-def loadCsv(ukbio=None, fields=None):
+def loadCsv(ukbio=None, fields=None, n_rows=None):
     """
     
     Parameters
@@ -167,53 +167,15 @@ def loadCsv(ukbio=None, fields=None):
         else:
             return None
     else:
-        df=pd.read_csv(ukbio.csv_path, usecols=new_fields)
-    
-
-
-    return df
-
-def loadSampleCsv(ukbio, fields=None, n_rows=0):
-    """
-    
-    Parameters
-    ----------
-    ukbio : ukbio object
-    
-    fields : List of strings, Mandatory
-        Accepts UKB field ID or text string (or mixed), e.g. '21-0.0' or 'Sex'.
-        
-    n_rows: int
-        Number of rows of ukb csv file to read
-
-    Returns
-    -------
-    df : Pandas dataframe
-        df containing all instances of chosen fields.
-
-    """
-    
-        
-    #Checking if field is text
-    new_fields, to_convert = [], []
-    for f in fields:
-        if re.match("^[0-9]*-", f) is None and f!='eid':
-             to_convert.append(f)
+        if n_rows is not None:
+            df=pd.read_csv(ukbio.csv_path, usecols=new_fields, nrows=n_rows)
         else:
-            new_fields.append(f)
-    #Converting text to id
-    if len(to_convert)>0:
-        new_fields.extend(getFieldIdsFromNames(ukbio, field_names=to_convert))
-    
-    
-    if 'eid' not in fields:
-        new_fields.append('eid')
+            df=pd.read_csv(ukbio.csv_path, usecols=new_fields)
     
 
-    
-    df=pd.read_csv(ukbio.csv_path, usecols=new_fields, nrows=n_rows)
 
     return df
+
 
 
 def fieldIdsToNames(ukbio=None, df=None):
