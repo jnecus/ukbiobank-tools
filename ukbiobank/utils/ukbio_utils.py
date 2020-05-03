@@ -141,14 +141,27 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
 
     """
     
-        
-    #Checking if field is text
+    
+    #Testing for existence of all fields in ukbio object
+    not_found=[]
+    all_field_names_and_ids=ukbio.field_instance_array_df['field_name'].unique().tolist()
+    all_field_names_and_ids.extend(ukbio.field_instance_array_df['id_instance_array'].tolist())
+    for f in fields:
+        if f not in all_field_names_and_ids and f!='eid':
+            not_found.append(f)
+    
+    print('The following variables were not found: {0}'.format(not_found))
+    
+    
+    #Checking if field is text (new_fields will be a list of all field IDs after conversion from text)
     new_fields, to_convert = [], []
     for f in fields:
         if re.match("^[0-9]*-", f) is None and f!='eid':
-             to_convert.append(f)
+            to_convert.append(f)
         else:
             new_fields.append(f)
+    
+    
     #Converting text to id
     if len(to_convert)>0:
         new_fields.extend(getFieldIdsFromNames(ukbio, field_names=to_convert))
