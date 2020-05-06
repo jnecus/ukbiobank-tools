@@ -8,7 +8,7 @@ UKBiobank data loading utilities
 """
 import pandas as pd
 import re
-
+import numpy as np
 
 def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     """
@@ -24,7 +24,9 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
 
     Returns
     -------
-    field_instance_array pandas dataframe        
+    field_instance_array pandas dataframe.        
+    
+    This is used as a reference for decoding columns heads & filtering based on column, instance etc
 
     """
     
@@ -58,31 +60,56 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     #creating field_id_instance_array column
     result['id_instance_array']=result['field_id'].astype(str)+'-'+result['instance'].astype(str)+'.'+result['array'].astype(str)
 
-    return result
+    
+    #Renaming duplicate fieldnames (inserting fieldID into name.)
+    
+    #get unique IDs
+    uniq_ids=result.drop_duplicates(subset=['field_id'])
+    duplicate_names=uniq_ids[uniq_ids.duplicated(subset=['field_name'],keep=False)]
+    duplicate_names_ids=duplicate_names.field_id.unique().tolist()
 
-
-def getFieldIDFieldNameDf(field_instance_array_df=None):
-    """
+    
+    #Splitting duplicated from non-duplicate in order to append name columbn for duplicate (couldn't find a way to achieve this in one go..)
+    #This way is verbose :(  ....
+    result_duplicate=result[result['field_id'].isin(duplicate_names_ids)]
+    result_non_duplicate=result[~result['field_id'].isin(duplicate_names_ids)]
+    
+    result_duplicate.loc[:,'new_field_name']=result_duplicate['field_name']+ ' (Field ID: ' + result_duplicate['field_id'].astype(str)+ ')'
+    result_duplicate.drop(columns='field_name',inplace=True)
+    result_duplicate.loc[:,'field_name']=result_duplicate['new_field_name']
+    result_duplicate.drop(columns='new_field_name',inplace=True)
+    
+    result2=result_duplicate.append(result_non_duplicate)
+    
     
 
-    Parameters
-    ----------
-    field_instance_array_df : ukbio field_instance_arraypandas df
 
-    Returns
-    -------
-    fieldID_fieldName_df : shortened 'reference df' (index='field ID', 'field_name'=fieldname
-                                                   e.g index=21, 'field_name'='Sex')
 
-    """
-    fieldID_fieldName_df=field_instance_array_df.copy()
+    return result2
+
+#DELETE BELOW..
+# def getFieldIDFieldNameDf(field_instance_array_df=None):
+#     """
+    
+
+#     Parameters
+#     ----------
+#     field_instance_array_df : ukbio field_instance_arraypandas df
+
+#     Returns
+#     -------
+#     fieldID_fieldName_df : shortened 'reference df' (index='field ID', 'field_name'=fieldname
+#                                                    e.g index=21, 'field_name'='Sex')
+
+#     """
+#     fieldID_fieldName_df=field_instance_array_df.copy()
     
  
-    fieldID_fieldName_df.set_index('field_id',inplace=True)    
-    fieldID_fieldName_df = fieldID_fieldName_df.loc[~fieldID_fieldName_df.index.duplicated(keep='first')]
+#     fieldID_fieldName_df.set_index('field_id',inplace=True)    
+#     fieldID_fieldName_df = fieldID_fieldName_df.loc[~fieldID_fieldName_df.index.duplicated(keep='first')]
 
 
-    return fieldID_fieldName_df
+#     return fieldID_fieldName_df
 
 def getFieldnames(ukbio):
     """
@@ -150,7 +177,8 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
         if f not in all_field_names_and_ids and f!='eid':
             not_found.append(f)
     
-    print('The following variables were not found: {0}'.format(not_found))
+    if len(not_found)>0:
+        print('The following variables were not found: {0} \n either check the spelling of the variables or alternatively try using the category ID'.format(not_found))
     
     
     #Checking if field is text (new_fields will be a list of all field IDs after conversion from text)
@@ -209,7 +237,7 @@ def fieldIdsToNames(ukbio=None, df=None):
     """
     
     cols=df.columns.tolist()
-    fieldID_fieldName_df=ukbio.fieldID_fieldName_df.copy()
+    fieldID_fieldName_df=ukbio.field_instance_array_df.copy()
 
     
     
@@ -220,7 +248,7 @@ def fieldIdsToNames(ukbio=None, df=None):
            
             fieldID=c.split('-')[0]
             
-            fieldName=fieldID_fieldName_df.loc[int(fieldID)]['field_name']
+            fieldName=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(fieldID)]['field_name'].iloc[0]
             
             converted=re.sub("^([0-9])*-",fieldName+'-',c)
             
@@ -253,21 +281,21 @@ def fieldNamesToIds(ukbio=None, df=None):
     """
     
     cols=df.columns.tolist()    
-    fieldID_fieldName_df=ukbio.fieldID_fieldName_df.copy()
-    fieldID_fieldName_df['field_id']=fieldID_fieldName_df.index
-    fieldID_fieldName_df.set_index('field_name', inplace=True)
-
+    fieldID_fieldName_df=ukbio.field_instance_array_df.copy()
+    
     
     new_fields = []
     #Check if field finishes with '-(instance).(array)' format, if so 
     for c in cols:
         if re.match(".*-[0-9]*\.[0-9]*$", c) is not None and c!='eid':
            
-            fieldNameParts=c.split('-')[:-1] # get all parts of string up until the final '-'
-            fieldName='-'.join(fieldNameParts)#
-            fieldID=fieldID_fieldName_df.loc[fieldName]['field_id']
             
+            fieldNameParts=c.split('-')[:-1] # get all parts of string up until the final '-' (i.e. the name)
+            
+            fieldName='-'.join(fieldNameParts)#
             instanceArray=c.split('-')[-1]
+            
+            fieldID=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==fieldName]['field_id'].iloc[0]
             
             converted=re.sub("(.*)-[0-9]*\.[0-9]*$",str(fieldID)+'-'+instanceArray,c)
             

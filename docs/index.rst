@@ -10,7 +10,8 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-
+    
+   demonstrating_functionality
 
 
 Indices and tables
