@@ -87,29 +87,6 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
 
     return result2
 
-#DELETE BELOW..
-# def getFieldIDFieldNameDf(field_instance_array_df=None):
-#     """
-    
-
-#     Parameters
-#     ----------
-#     field_instance_array_df : ukbio field_instance_arraypandas df
-
-#     Returns
-#     -------
-#     fieldID_fieldName_df : shortened 'reference df' (index='field ID', 'field_name'=fieldname
-#                                                    e.g index=21, 'field_name'='Sex')
-
-#     """
-#     fieldID_fieldName_df=field_instance_array_df.copy()
-    
- 
-#     fieldID_fieldName_df.set_index('field_id',inplace=True)    
-#     fieldID_fieldName_df = fieldID_fieldName_df.loc[~fieldID_fieldName_df.index.duplicated(keep='first')]
-
-
-#     return fieldID_fieldName_df
 
 def getFieldnames(ukbio):
     """
@@ -127,6 +104,30 @@ def getFieldnames(ukbio):
     """
    
     return ukbio.field_instance_array_df['field_name'].unique().tolist()
+
+
+
+
+def getFieldIdsInstancesFromCategoryId(ukbio, field_ids=None):
+    """
+    
+
+    Parameters
+    ----------
+    ukbio : ukbio object
+    fieldNames : List of integers, mandatory
+        Ukbiobank field category ids.
+
+    Returns
+    -------
+    List of ALL ukbiobank fieldId_instance_array's associated with given field category id.
+
+    """
+
+    field_instance_array_df_temp=ukbio.field_instance_array_df.copy()    
+    field_ids=field_instance_array_df_temp[field_instance_array_df_temp['field_id'].isin(field_ids)]['id_instance_array'].tolist()
+
+    return field_ids
 
 
 def getFieldIdsFromNames(ukbio, field_names=None):
@@ -158,7 +159,7 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
     ukbio : ukbio object
     
     fields : List of strings, Mandatory
-        Accepts UKB field ID or text string (or mixed), e.g. '21-0.0' or 'Sex'.
+        Accepts UKB field category, ID or text string (or mixed), e.g. 21, '21-0.0' or 'Sex'.
 
 
     Returns
@@ -173,45 +174,50 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
     not_found=[]
     all_field_names_and_ids=ukbio.field_instance_array_df['field_name'].unique().tolist()
     all_field_names_and_ids.extend(ukbio.field_instance_array_df['id_instance_array'].tolist())
+    all_field_names_and_ids.extend(ukbio.field_instance_array_df['field_id'].tolist())
+    
     for f in fields:
         if f not in all_field_names_and_ids and f!='eid':
             not_found.append(f)
     
     if len(not_found)>0:
-        print('The following variables were not found: {0} \n either check the spelling of the variables or alternatively try using the category ID'.format(not_found))
+        print('The following variables were not found:\n {0}. \n\n This may be because the same fieldname is used across multiple field IDs.\n\n Either check the spelling of the variables or alternatively try using the field ID'.format(not_found))
     
     
     #Checking if field is text (new_fields will be a list of all field IDs after conversion from text)
-    new_fields, to_convert = [], []
+    new_fields, fieldname_to_convert, field_id_to_convert = [], [], []
     for f in fields:
-        if re.match("^[0-9]*-", f) is None and f!='eid':
-            to_convert.append(f)
+        
+        #if string
+        if isinstance(f, str) and f!='eid':
+            fieldname_to_convert.append(f)
+        
+        #if category id but not field-instance-array
+        elif re.match("^[0-9]*-", str(f)) is None and f!='eid' and isinstance(f, int):
+            field_id_to_convert.append(f)
+        
+        
         else:
             new_fields.append(f)
     
+    #Converting field cat to id-instance-arrays
+    if len(field_id_to_convert)>0:
+        new_fields.extend(getFieldIdsInstancesFromCategoryId(ukbio, field_ids=field_id_to_convert))
+
     
     #Converting text to id
-    if len(to_convert)>0:
-        new_fields.extend(getFieldIdsFromNames(ukbio, field_names=to_convert))
+    if len(fieldname_to_convert)>0:
+        new_fields.extend(getFieldIdsFromNames(ukbio, field_names=fieldname_to_convert))
     
     
     if 'eid' not in fields:
         new_fields.append('eid')
     
-    
-    
-    #Checking for number of fields to be loaded (assessing memory required)
-    if len(new_fields)> 600:
-        cont=input('The number of identified field instances will require {0}mb of  memory, do you want to continue to load? (y/n): '.format(((500000*8)/1e+6)*len(new_fields)))
-        if cont=='y':
-            df=pd.read_csv(ukbio.csv_path, usecols=new_fields)
-        else:
-            return None
+  
+    if n_rows is not None:
+        df=pd.read_csv(ukbio.csv_path, usecols=new_fields, nrows=n_rows)
     else:
-        if n_rows is not None:
-            df=pd.read_csv(ukbio.csv_path, usecols=new_fields, nrows=n_rows)
-        else:
-            df=pd.read_csv(ukbio.csv_path, usecols=new_fields)
+        df=pd.read_csv(ukbio.csv_path, usecols=new_fields)
     
 
 
@@ -219,7 +225,7 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
 
 
 
-def fieldIdsToNames(ukbio=None, df=None):
+def fieldIdsToNames(ukbio=None, df=None, ids=None):
     """
     
 
@@ -227,41 +233,87 @@ def fieldIdsToNames(ukbio=None, df=None):
     ----------
     ukbio : ukbio object, mandatory
         
-    df : pandas dataframe (generated using ukbio loadCsv)
+    df : pandas dataframe (generated using ukbio loadCsv), optional
         
+    ids: a list of ids (can be mixed text & id) to be converted to text, optional
 
     Returns
     -------
     Pandas dataframe (column names converted to text names)
 
-    """
+    or
     
-    cols=df.columns.tolist()
+    List of fieldnames
+
+    """
+
+    if df is not None and ids is not None:
+        print('Either specify df or ids, not both!')
+        
+    
     fieldID_fieldName_df=ukbio.field_instance_array_df.copy()
 
     
-    
-    new_fields = []
-    #Check if field is ID, if so, gather fieldname
-    for c in cols:
-        if re.match("^[0-9]*-", c) is not None and c!='eid':
-           
-            fieldID=c.split('-')[0]
+    if ids is not None:
+        ids_to_convert=[]
+        out=[]
+        for i in ids:
+             #if string with instance-array appendige
+            if isinstance(i, str) and re.match(".*-[0-9]*\.[0-9]*$", i) is not None :             
+               out.append(i)
+            #if string without instance-array appendige, then add appendages
+            if isinstance(i, str) and re.match(".*-[0-9]*\.[0-9]*$", i) is None :
+                field_names=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==i]['field_name']              
+                field_instances=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==i]['instance']      
+                field_arrays=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==i]['array']    
+                fieldnames_instance_array=field_names+'-'+field_instances.astype(str)+'.'+field_arrays.astype(str)
+                out.extend(fieldnames_instance_array.tolist())
+               
+            #elif id-instance-array, do nothing
+            elif re.match("^[0-9]*-", str(i)) is not None:
+                out.append(i)
+            #else if cat ID (int), then convert to name and add appendage
+            elif isinstance(i, int):
+                field_names=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(i)]['field_name']              
+                field_instances=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(i)]['instance']      
+                field_arrays=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(i)]['array']    
+                
+                #TODO APPEND THE FOLLOWING THREE TOGETHER,THEN CONVERT TO LIST AND EXTEND 'OUT'..
+                fieldnames_instance_array=field_names+'-'+field_instances.astype(str)+'.'+field_arrays.astype(str)
+                
+                out.extend(fieldnames_instance_array.tolist())
+          
+            #if category id but not field-instance-array
+            elif re.match("^[0-9]*-", str(f)) is None and f!='eid' and isinstance(f, int):
+                field_id_to_convert.append(i)
             
-            fieldName=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(fieldID)]['field_name'].iloc[0]
             
-            converted=re.sub("^([0-9])*-",fieldName+'-',c)
-            
-            new_fields.append(converted)
-        else:
-            new_fields.append(c)
-   
-    
-    new_df=df.copy()
-    new_df.columns=new_fields
+            else:
+                new_fields.append(i)
     
     
-    return new_df
+
+    elif df is not None:
+        cols=df.columns.tolist()    
+        new_fields = []
+        #Check if field is ID, if so, gather fieldname
+        for c in cols:
+            if re.match("^[0-9]*-", c) is not None and c!='eid':
+               
+                fieldID=c.split('-')[0]
+                
+                fieldName=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(fieldID)]['field_name'].iloc[0]
+                
+                converted=re.sub("^([0-9])*-",fieldName+'-',c)
+                
+                new_fields.append(converted)
+            else:
+                new_fields.append(c)
+        out=df.copy()
+        out.columns=new_fields
+    
+    
+    return out
 
 def fieldNamesToIds(ukbio=None, df=None):
     """
@@ -401,66 +453,3 @@ def addFields(ukbio=None, df=None, fields=None):
     out_df=df.merge(new_df, on='eid', how='inner')
     
     return out_df
-
-# def getFieldname(fieldId=None):
-#     """
-    
-
-#     Parameters
-#     ----------
-
-#     fieldIds : String. ukbiobank field id
-#          The default is None.
-
-#     Returns
-#     -------
-#     fieldname_decoded : string
-
-#     """
-    
-    
-    
-#     fieldIds=[]
-#     fieldIds.append(fieldId)
-#     field_instance_array_df=getFieldsInstancesArrays(fieldIds=fieldIds)
-
-
-#     #TODO: (remove need for hardcoded link to fieldID->Name dictionary)
-#     ddict=pd.read_csv('C:/Users/Joe/Google Drive/Post Doc Dementia/UK Biobank/Data_Dictionary_Showcase.csv')
-    
-#     # converting fields to names
-#     ddict2=ddict[['FieldID','Field']]
-#     ddict_mapper=(pd.Series(ddict2.Field.values,index=ddict2.FieldID)).to_dict()
-#     fields_numeric=pd.to_numeric(pd.Series(list(field_instance_array_df['field'].unique())))
-#     fieldname_decoded=fields_numeric.map(ddict_mapper).tolist()
-    
-#     return fieldname_decoded[0]
-
-
-
-
-
-
-
-# def getFieldIds(ukb_csv=None):
-#     """
-    
-
-#     Parameters
-#     ----------
-#     ukb_csv : String, mandatory
-#         path to UKB CSV file. The default is None.
-
-#     Returns
-#     -------
-#     List
-#         List of ukb field ids in ukb_csv file.
-
-#     """
-    
-#     return pd.read_csv(ukb_csv,nrows=0).columns.tolist()
-
-
-
-
-
