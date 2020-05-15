@@ -21,16 +21,13 @@ ukb=ukbio.ukbio(ukb_csv=ukb_csv)
 ukb_csv = 'C:/Users/Joe/Google Drive/Post Doc Dementia/UK Biobank/March2020_data_refreshes/ukb41344/ukb41344.zip'
 ukb=ukbio.ukbio(ukb_csv=ukb_csv)
 
+#This could also be a ukbiobank-style csv which has already been preprocessed to reduce file size. The important thing is that the column headers correspond to fields ids and that it contains an 'eid'
+
 #Gathering fieldnames
 fieldnames=getFieldnames(ukb)
  
 #loading csv with fields
 #df=loadCsv(ukb,fields=['eid','Non-cancer illness code, self-reported','Date of all cause dementia report','Source of all cause dementia report', 'Diagnoses - main ICD10','Diagnoses - main ICD9'])
-
-#loading a sample of df for testing purposes
-df=loadSampleCsv(ukb,fields=['eid','Non-cancer illness code, self-reported','Date of all cause dementia report','Source of all cause dementia report', 'Diagnoses - main ICD10','Diagnoses - main ICD9'],n_rows=2000)
-
-
 
 
 
@@ -65,26 +62,6 @@ df5=illnessCodesToText(ukb, df4)
 
 """ To Do"""
 #df6=addFields(ukb, df, fields=[])
-
-
-
-
-
-#1. How many people have a diagnosis of dementia and one scan or two scans?
-
-
-#Generating 'Date of all cause dementia report' in separate script : 'generatingAllCauseDementiaReport20200401.py'
-
-
-
-
-
-
-
-
-
-
-
 
 
 
