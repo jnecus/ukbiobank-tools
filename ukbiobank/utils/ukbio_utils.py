@@ -255,41 +255,31 @@ def fieldIdsToNames(ukbio=None, df=None, ids=None):
 
     
     if ids is not None:
-        ids_to_convert=[]
         out=[]
         for i in ids:
-             #if string with instance-array appendige
+            #if string with instance-array appendige
             if isinstance(i, str) and re.match(".*-[0-9]*\.[0-9]*$", i) is not None :             
                out.append(i)
             #if string without instance-array appendige, then add appendages
-            if isinstance(i, str) and re.match(".*-[0-9]*\.[0-9]*$", i) is None :
+            elif isinstance(i, str) and re.match(".*-[0-9]*\.[0-9]*$", i) is None :
                 field_names=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==i]['field_name']              
                 field_instances=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==i]['instance']      
                 field_arrays=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==i]['array']    
                 fieldnames_instance_array=field_names+'-'+field_instances.astype(str)+'.'+field_arrays.astype(str)
                 out.extend(fieldnames_instance_array.tolist())
                
-            #elif id-instance-array, do nothing
-            elif re.match("^[0-9]*-", str(i)) is not None:
-                out.append(i)
-            #else if cat ID (int), then convert to name and add appendage
-            elif isinstance(i, int):
+            #else if field ID (int) and Field ID exists, then convert to name and add appendage
+            elif isinstance(i, int) and i in fieldID_fieldName_df['field_id'].values:
                 field_names=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(i)]['field_name']              
                 field_instances=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(i)]['instance']      
                 field_arrays=fieldID_fieldName_df[fieldID_fieldName_df['field_id']==int(i)]['array']    
                 
-                #TODO APPEND THE FOLLOWING THREE TOGETHER,THEN CONVERT TO LIST AND EXTEND 'OUT'..
-                fieldnames_instance_array=field_names+'-'+field_instances.astype(str)+'.'+field_arrays.astype(str)
-                
+                fieldnames_instance_array=field_names+'-'+field_instances.astype(str)+'.'+field_arrays.astype(str) 
                 out.extend(fieldnames_instance_array.tolist())
           
-            #if category id but not field-instance-array
-            elif re.match("^[0-9]*-", str(f)) is None and f!='eid' and isinstance(f, int):
-                field_id_to_convert.append(i)
-            
-            
             else:
-                new_fields.append(i)
+                print('Could not find field ID: {0}'.format(i))
+            
     
     
 
