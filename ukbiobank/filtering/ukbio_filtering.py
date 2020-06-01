@@ -30,16 +30,7 @@ def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
     Pandas dataframe with datafields filtered for selected instances/arrays.
 
     """
-    
-    
-    #This function expects column heading to be in the format 'fieldID-instance.array'
-    
-    #test columns 
-    #xx.columns.str.contains('[a-z]').any()
-    
-    #if any column contains alphanumeric characters, (TODO: include functionality to ignore 'eid'..this will currently convert to ID every time)
-    
-    
+
     #if all columns contain alphanumeric characters then convert to field ID 
     if df.columns.str.contains('[a-z]').all():
         df=fieldNamesToIds(ukbio,df)

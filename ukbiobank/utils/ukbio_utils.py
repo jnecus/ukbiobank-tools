@@ -443,3 +443,150 @@ def addFields(ukbio=None, df=None, fields=None):
     out_df=df.merge(new_df, on='eid', how='inner')
     
     return out_df
+
+
+
+
+def calculateHealthySleepScore(ukbio=None, df=None):
+    """
+    Generates a composite healthy sleep score (0-5) accoring the methods used: 
+        https://academic.oup.com/eurheartj/article/41/11/1182/5678714#200787415
+
+
+    Parameters
+    ----------
+    ukbio : ukbio object.  Mandatory.
+    
+    df : pandas df loaded using ukbiobank-tools. Mandatory.
+
+    Returns
+    -------
+    out_df : pandas df containing healthy sleep score (0-5)
+
+    """
+    
+    #Check that vars exist in df
+
+
+    #sleep_vars=['Morning/evening person (chronotype)-{0}.0', 'Sleep duration-{0}.0',  'Sleeplessness / insomnia-{0}.0', 'Snoring-{0}.0' ,  'Daytime dozing / sleeping (narcolepsy)-{0}.0']
+    
+    for instance in ['2', '3']:
+        
+        
+        hss='healthy_sleep_score-{0}.0'.format(instance) #(hss : healthy sleep score)
+        
+        #Score starts at zero (+1 is added depending upon question response)
+        df[hss] = 0
+        
+        #Chronotype score
+        v = 'Morning/evening person (chronotype)-{0}.0'.format(instance)
+        df.loc[(df[v] == 1) | (df[v] == 2) , hss] = df[hss] + 1
+        
+        #Sleep duration score
+        v = 'Sleep duration-{0}.0'.format(instance)
+        df.loc[(df[v] == 7) | (df[v] == 8) , hss] = df[hss] + 1
+        
+        #Insomnia score
+        v =  'Sleeplessness / insomnia-{0}.0'.format(instance)
+        df.loc[(df[v] == 1) , hss] = df[hss] + 1
+        
+        #Snore score
+        v = 'Snoring-{0}.0'.format(instance)
+        df.loc[(df[v] == 2) , hss] = df[hss] + 1
+        
+        #Daytime dozing score
+        v = 'Daytime dozing / sleeping (narcolepsy)-{0}.0'.format(instance)
+        df.loc[(df[v] == 0) | (df[v] == 1) , hss] = df[hss] + 1
+        
+        
+    # Assign score
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #Methods below:
+    """
+    
+    We included five sleep factors (chronotype, duration, insomnia, snoring, and excessive daytime sleepiness) to generate a healthy sleep score. Low-risk sleep factors were defined as follows: early chronotype (‘morning’ or ‘morning than evening’); sleep 7–8 h per day; reported never or rarely insomnia symptoms; no self-reported snoring; and no frequent daytime sleepiness (‘never/rarely’ or ‘sometimes’). For each sleep factor, the participant received a score of 1 if he or she was classified as low risk for that factor or 0 if at high risk for that factor. All component scores were summed to obtain a healthy sleep score ranging from 0 to 5, with higher scores indicating a healthier sleep pattern. We then define the overall sleep patterns as ‘healthy sleep pattern’ (healthy sleep score ≥4), ‘intermediate sleep pattern’ (2≤healthy sleep score ≤3), and ‘poor sleep pattern’ (healthy sleep score ≤1) based on the healthy sleep score.
+
+In sensitive analysis, we further constructed a weighted sleep score based on the five sleep factors by using the equation: weighted sleep score = (β1×factor1 +β2 ×factor 2 +…+β5×factor 5) × (5/sum of the β coefficients). This weighted score also ranges from 0 to 5 points but considers magnitudes of the adjusted relative risk for each factor in each sleep pattern as a combination of five factors.
+
+
+    """
+    
+    
+    
+    
+    
+    out_df=df.copy()
+    
+    
+    return out_df
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+def removeOutliers(df = None, std = 3, cols = None):
+    """
+    
+    Parameters
+    ---------
+    
+    df: pandas dataframe
+    
+    std : int, defauult 3. Number of standard deviations threshold to exclude outliers.
+
+    cols : columns in pandas df to exlcude outliers.
+
+    Returns
+    -------
+    df : Pandas dataframe
+     
+
+    """
+    
+    
+    
+    for c in cols:
+        upper_limit, lower_limit = (df[c].mean() + 3*df[c].std()), (df[c].mean() - 3*df[c].std())
+        df[c][df[c] > upper_limit] = np.nan
+        df[c][df[c] < lower_limit] = np.nan
+    
+    return df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
