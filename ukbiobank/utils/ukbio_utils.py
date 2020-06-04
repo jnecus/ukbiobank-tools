@@ -503,16 +503,7 @@ def calculateHealthySleepScore(ukbio=None, df=None):
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
     #Methods below:
@@ -524,11 +515,7 @@ In sensitive analysis, we further constructed a weighted sleep score based on th
 
 
     """
-    
-    
-    
-    
-    
+
     out_df=df.copy()
     
     
@@ -536,9 +523,7 @@ In sensitive analysis, we further constructed a weighted sleep score based on th
     
     
     
-    
-    
-    
+
     
     
     
@@ -559,10 +544,7 @@ def removeOutliers(df = None, std = 3, cols = None):
     -------
     df : Pandas dataframe
      
-
-    """
-    
-    
+    """    
     
     for c in cols:
         upper_limit, lower_limit = (df[c].mean() + 3*df[c].std()), (df[c].mean() - 3*df[c].std())
@@ -575,12 +557,128 @@ def removeOutliers(df = None, std = 3, cols = None):
 
 
 
+def  calculateChangeInCognitiveScore(ukbio=None, df=None):
+    """    
+    Parameters
+    ----------
+    ukbio : ukbio object.  Mandatory.
+    
+    df : pandas df loaded using ukbiobank-tools. Mandatory.
+
+    Returns
+    -------
+    out_df : pandas df containing cognitive decline score
+    
+    Currently subtracts cognitive test score at instance 3 from instance 2 for the tests listed below. Output variables are labelled as 'change in xxx':
+        
+        
+     - 'Mean time to correctly identify matches'->'Change in Reaction Time'  
+     - 'Maximum digits remembered correctly (Field ID: 4282) ->  'Change in Numeric Memory (max digits remembered)
+     - Fluid intelligence score (Field ID: 20016) -> 'Change in Fluid Intelligence Score'
+     - 'Number of incorrect matches in round (Field ID: 399) -> 'Change in Pairs matching (Number of incorrect matches)
+     - 'Number of puzzles correctly solved -> 'Change in Number of puzzles correctly solved (matrix)'
+     - 'Number of puzzles correct -> 'Change in Number of puzzles correct (tower)
+     - 'Number of word pairs correctly associated -> Change in Number of word pairs correctly associated'
+        
+    
+        
+    
+    
+    """
+
+    out_df=df.copy()
+    
+
+    # RT
+    out_df['Change in Reaction Time']=out_df['Mean time to correctly identify matches-3.0']-out_df['Mean time to correctly identify matches-2.0']
+    
+    # Numeric memory
+    out_df['Change in Numeric Memory (max digits remembered)']=out_df['Maximum digits remembered correctly (Field ID: 4282)-3.0']-out_df['Maximum digits remembered correctly (Field ID: 4282)-2.0']
+    
+    # Fluid intelligence
+    out_df['Change in Fluid Intelligence Score']=out_df['Fluid intelligence score (Field ID: 20016)-3.0']-out_df['Fluid intelligence score (Field ID: 20016)-2.0']
+    
+    # Pairs matching cards
+    out_df['Change in Pairs matching (Number of incorrect matches)']=out_df['Number of incorrect matches in round (Field ID: 399)-3.2']-out_df['Number of incorrect matches in round (Field ID: 399)-2.2']
+    
+    # Matrix pattern completion
+    out_df['Change in Number of puzzles correctly solved (matrix)']=out_df['Number of puzzles correctly solved-3.0']-out_df['Number of puzzles correctly solved-2.0']
+    
+    # Tower rearranging
+    out_df['Change in Number of puzzles correct (tower)']=out_df['Number of puzzles correct-3.0']-out_df['Number of puzzles correct-2.0']
+    
+    # Paired associate learning
+    out_df['Change in Number of word pairs correctly associated']=out_df['Number of word pairs correctly associated-3.0']-out_df['Number of word pairs correctly associated-2.0']
 
 
 
+    return out_df
 
 
 
+def calculateCognitiveDeclineScore(ukbio=None, df=None):
+    """
+    Currently generates a composite 'cognitive_decline_score-3.0' between instances 2 & 3 (imaging visits)
+    +1 point is added is the score on a test got 'worse' between instances 2 & 3.
+    
+    Future to do's
+    - weight outcome by 'how much worse' the test score got
+    -include additional tests, instances etc
+    -account for age. .
+   
+    Parameters
+    ----------
+    ukbio : ukbio object.  Mandatory.
+    
+    df : pandas df loaded using ukbiobank-tools. Mandatory.
+
+    Returns
+    -------
+    out_df : pandas df containing cognitive decline score
+    """
+    
+    #Check that vars exist in df
+
+    
+    cds='cognitive_decline_score-3.0' #(cds : cognitive decline score)
+    
+    #Score starts at zero (+1 is added depending upon question response)
+    df[cds] = 0
+    
+    # RT   (if reaction time at scan 2 is higher [(scan_2-scan_1)> 0] , add a cog decline point
+    v = 'Change in Reaction Time'
+    df.loc[(df[v] > 0), cds] = df[cds] + 1
+    
+    # Numeric memory (if digits remember at scan 2 are fewer (scan_2 - scan_1 <0))
+    v = 'Change in Numeric Memory (max digits remembered)'
+    df.loc[(df[v] < 0), cds] = df[cds] + 1
+    
+    # Fluid Intelligence (if FIQ at scan 2 is lower (scan_2 - scan_1 <0))
+    v =  'Change in Fluid Intelligence Score'
+    df.loc[(df[v] < 0) , cds] = df[cds] + 1
+    
+    # Pairs matching  (if no of incorrect matches at scan 2 is higher  scan2 - scan1 > 0)
+    v ='Change in Pairs matching (Number of incorrect matches)'
+    df.loc[(df[v] > 0) , cds] = df[cds] + 1
+     
+    # Matrix puzzle  (if no of correct matches at scan 2 is lower  scan2 - scan1 < 0)
+    v = 'Change in Number of puzzles correctly solved (matrix)'
+    df.loc[(df[v] < 0) , cds] = df[cds] + 1
+    
+  
+    # Tower puzzle  (if no of correct at scan 2 is lower  scan2 - scan1 < 0)
+    v = 'Change in Number of puzzles correct (tower)'
+    df.loc[(df[v] < 0) , cds] = df[cds] + 1
+    
+    # Word pair association  (if no of correct matches at scan 2 is lower  scan2 - scan1 < 0)
+    v = 'Change in Number of word pairs correctly associated'
+    df.loc[(df[v] < 0) , cds] = df[cds] + 1
+    
+    out_df=df.copy()
+    
+    
+    return out_df
+    
 
 
 
