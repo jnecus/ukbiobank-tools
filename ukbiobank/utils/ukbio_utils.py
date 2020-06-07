@@ -588,7 +588,9 @@ def  calculateChangeInCognitiveScore(ukbio=None, df=None):
 
     out_df=df.copy()
     
-
+    # List of cognitive vars to calculate change between
+    
+    cog_vars = []
     # RT
     out_df['Change in Reaction Time']=out_df['Mean time to correctly identify matches-3.0']-out_df['Mean time to correctly identify matches-2.0']
     
@@ -637,7 +639,7 @@ def calculateCognitiveDeclineScore(ukbio=None, df=None):
     out_df : pandas df containing cognitive decline score
     """
     
-    #Check that vars exist in df
+    #TODO Check that 'Change in' cognitive vars exist in df, if not then run calculateChangeInCognitiveScore
 
     
     cds='cognitive_decline_score-3.0' #(cds : cognitive decline score)
