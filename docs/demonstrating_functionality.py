@@ -9,7 +9,7 @@ Loading and testing ukbio features with ukbiobank data.
 
 #import pandas as pd
 from ukbio import ukbio
-from ukbio.ukbio_utils import getFieldnames, loadCsv, illnessCodesToText, 
+from ukbio.ukbio_utils import getFieldnames, loadCsv, illnessCodesToText
 
 
 """ FIRST STEP. Loading ukbiobank data into ukbio object"""
@@ -55,7 +55,7 @@ fields_to_include={field1:values1} #create dictionary of fields/values to filter
 #Perform filterByField
 from ukbio.ukbio_filtering import filterByField
 from ukbio.ukbio_utils import fieldNamesToIds
-df3=fieldNamesToIds(ukb,df3)#converting back to ids as filterByFields currently only accepts fieldID column headings
+df3=fieldNamesToIds(ukb,df)#converting back to ids as filterByFields currently only accepts fieldID column headings
 df4=filterByField(ukbio=ukb,df=df3,fields_to_include=fields_to_include, instances=[0,1,2,3])
 
 

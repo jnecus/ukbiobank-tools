@@ -11,9 +11,7 @@ import re
 
 import wx
 import ukbiobank 
-from wx.lib.pubsub import pub 
 
-#wxpython code taken from https://realpython.com/python-gui-with-wxpython/
 
 #Open GUI
 def open():    
@@ -30,8 +28,6 @@ class LoadFrame(wx.Frame):
         super().__init__(parent=None, title='UKBiobank-tools')
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)        
-        
-        
         
         self.my_csv = wx.FilePickerCtrl(panel)
         my_btn = wx.Button(panel,label='Load CSV')
@@ -63,23 +59,28 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
     
     def __init__(self, frame, ukb):
         super().__init__(parent=None,title='UKBiobank-tools menu')
+        self.ukb_object = ukb
+        
+        
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)        
 
         
         #Select variables from checkbox
         checkbox_btn = wx.Button(panel, label='Select desired variables')
-        checkbox_btn.Bind(wx.EVT_BUTTON,lambda evt, ukb=ukb: self.checkbox_btn(evt, ukb))#for explanation see: https://wiki.wxpython.org/Passing%20Arguments%20to%20Callbacks
-        my_sizer.Add(checkbox_btn, 0, wx.ALL | wx.EXPAND, 0) 
-
+        checkbox_btn.Bind(wx.EVT_BUTTON,lambda evt, ukb=ukb: self.checkboxFrameButton(evt, self.ukb_object))#for explanation see: https://wiki.wxpython.org/Passing%20Arguments%20to%20Callbacks
+        my_sizer.Add(checkbox_btn, 0, wx.ALL | wx.EXPAND, 0)
+        
+        
         #Print selections
         view_btn = wx.Button(panel, label='View Selections')
-        view_btn.Bind(wx.EVT_BUTTON, self.selectionsGetter) # to do : add data here as funcationality increases
+        view_btn.Bind(wx.EVT_BUTTON, self.selectionsGetter) # to do : add data here as functionality increases
         my_sizer.Add(view_btn, 0, wx.ALL | wx.EXPAND, 0) 
         
     
-        #Output CSV
+        #Output CSV 
         output_btn = wx.Button(panel, label='Output CSV')
+        output_btn.Bind(wx.EVT_BUTTON, self.outputCSV) # to do : add data here as functionality increases
         my_sizer.Add(output_btn, 0, wx.ALL | wx.EXPAND, 0) 
 
   
@@ -87,44 +88,43 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         self.Show()
         
 
+    #Outputting CSV with given selections
+    def outputCSV(self, event):
+        
+        # Adding desired fields
+        df = ukbiobank.utils.addFields(ukbio=self.ukb_object, df=None, fields=list(self.ukb_object.SELECTIONS))
+        
+        # Saving to desktop.. 
+        df.to_csv('C:/Users/Joe/Desktop/output_csv_temp.csv')
         
         
 
-
-
-    #Loading variable checkbox frame
-    def checkbox_btn(self, event, ukb):
+    #Loading CheckBoxFrame
+    def checkboxFrameButton(self, event, ukb):
         CheckBoxFrame(self, ukb)
         return
     
     
-    
-    
-    
-   
-    
-     #Function to gather all options selected
-    def selectionsGetter(self):
-       
-        #Add selections from other frams
-        print(ukb.SELECTIONS)
+    #Function to gather all options selected
+    def selectionsGetter(self, event):       
+        #Add selections from other frame
+        print(self.ukb_object.SELECTIONS)
         return 
     
     
-    # #Viewing all selections
-    # def view_selections(self, event):
-    #     #Presenting variables selected
-    #     SelectionsFrame(self)
-    #     return
-        
-        
-        #Gathering other options selected, e.g. filters . . 
+    #Function to set options selected
+    def selectionsSetter(self, arg1=None):       
+        #Add selections from other frame
+        self.ukb_object.SELECTIONS = arg1
+        return 
+    
+    
         
 
     
 class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
         
-    def __init__(self, frame, ukb):
+    def __init__(self, parent, ukb):
         super().__init__(parent=None, title='UKBiobank-tools checkbox')
         panel = wx.Panel(self)        
         my_sizer = wx.BoxSizer(wx.VERTICAL)      
@@ -138,7 +138,7 @@ class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
         
         # #Submit button
         submit=wx.Button(panel,label='Submit')
-        submit.Bind(wx.EVT_BUTTON, lambda evt, ukb=ukb: self.submit(evt, ukb))
+        submit.Bind(wx.EVT_BUTTON, lambda evt, ukb=ukb: self.submit(evt, parent, ukb))
         
         
         my_sizer.Add(desc, 0, wx.CENTER | wx.EXPAND)
@@ -150,13 +150,52 @@ class CheckBoxFrame(wx.Frame, ukbiobank.ukbio):
 
 
     #set selections
-    def submit(self, event, ukb):
-        #NEED TO pass this ukb object back . . .?
+    def submit(self, event, parent, ukb):
         
-        ukb.SELECTIONS=self.checkbox.GetCheckedStrings()
-        print(ukb.SELECTIONS)
+        selections = self.checkbox.GetCheckedStrings()
+        
+        #Setting selections, passing through parent MenuFrame
+        MenuFrame.selectionsSetter(parent, arg1 = selections)
+
+        
         self.Close()
         return 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 """
 class SelectionsFrame(wx.Frame):

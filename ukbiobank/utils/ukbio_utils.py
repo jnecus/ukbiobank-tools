@@ -425,23 +425,33 @@ def addFields(ukbio=None, df=None, fields=None):
 
     """
     
+    #If no df passed, then initiliase empty df
+    if df == None:
+        in_df = False
+        df = pd.DataFrame()
+    else:
+        in_df = True
+    
     #convert input to df if not (e.g. if just a series of eids)
-    if not isinstance(df,pd.DataFrame):
-        df=df.to_frame()
+    if not isinstance(df, pd.DataFrame):
+        df = df.to_frame()
 
     
     #Append 'eid' to list of required fields
     if 'eid' not in fields:
         fields.append('eid')
     
-    #get extra fields
-    new_df=loadCsv(ukbio,fields=fields)
+    # Get extra fields
+    new_df = loadCsv(ukbio, fields=fields)
         
     #TODO: Deal with duplicate columns (i.e. same columns may exist in name or id form in input df)
     
-    #merge dataframes
-    out_df=df.merge(new_df, on='eid', how='inner')
-    
+    # Merge dataframes
+    if  in_df is True:
+        out_df=df.merge(new_df, on='eid', how='inner')
+    else:
+        out_df = new_df.copy()
+        
     return out_df
 
 
@@ -557,7 +567,7 @@ def removeOutliers(df = None, std = 3, cols = None):
 
 
 
-def  calculateChangeInCognitiveScore(ukbio=None, df=None):
+def  calculateChangeInCognitiveScores(ukbio=None, df=None):
     """    
     Parameters
     ----------
@@ -569,16 +579,16 @@ def  calculateChangeInCognitiveScore(ukbio=None, df=None):
     -------
     out_df : pandas df containing cognitive decline score
     
-    Currently subtracts cognitive test score at instance 3 from instance 2 for the tests listed below. Output variables are labelled as 'change in xxx':
+    Currently subtracts cognitive test score at instance 3 from instance 2 for the tests listed below. Output variables are labelled as 'change in x':
         
         
-     - 'Mean time to correctly identify matches'->'Change in Reaction Time'  
-     - 'Maximum digits remembered correctly (Field ID: 4282) ->  'Change in Numeric Memory (max digits remembered)
-     - Fluid intelligence score (Field ID: 20016) -> 'Change in Fluid Intelligence Score'
-     - 'Number of incorrect matches in round (Field ID: 399) -> 'Change in Pairs matching (Number of incorrect matches)
-     - 'Number of puzzles correctly solved -> 'Change in Number of puzzles correctly solved (matrix)'
-     - 'Number of puzzles correct -> 'Change in Number of puzzles correct (tower)
-     - 'Number of word pairs correctly associated -> Change in Number of word pairs correctly associated'
+     - 'Mean time to correctly identify matches'->'Change in Mean time to correctly identify matches 
+     - 'Maximum digits remembered correctly (Field ID: 4282) ->  'Change in x
+     - Fluid intelligence score (Field ID: 20016) -> 'Change in x
+     - 'Number of incorrect matches in round (Field ID: 399) -> 'Change in x
+     - 'Number of puzzles correctly solved -> 'Change in x
+     - 'Number of puzzles correct -> 'Change in x
+     - 'Number of word pairs correctly associated -> Change in x
         
     
         
@@ -588,43 +598,42 @@ def  calculateChangeInCognitiveScore(ukbio=None, df=None):
 
     out_df=df.copy()
     
-    # List of cognitive vars to calculate change between
+    # List of pairs of cognitive vars to calculate change between (first - second) 
     
-    cog_vars = []
-    # RT
-    out_df['Change in Reaction Time']=out_df['Mean time to correctly identify matches-3.0']-out_df['Mean time to correctly identify matches-2.0']
+    cog_vars = [('Mean time to correctly identify matches-3.0','Mean time to correctly identify matches-2.0'),
+                ('Maximum digits remembered correctly (Field ID: 4282)-3.0','Maximum digits remembered correctly (Field ID: 4282)-2.0'),
+                ('Fluid intelligence score (Field ID: 20016)-3.0','Fluid intelligence score (Field ID: 20016)-2.0'),
+                ('Number of incorrect matches in round (Field ID: 399)-3.2','Number of incorrect matches in round (Field ID: 399)-2.2'),
+                ('Number of puzzles correctly solved-3.0','Number of puzzles correctly solved-2.0'),
+                ('Number of puzzles correct-3.0','Number of puzzles correct-2.0'),                
+                ('Number of word pairs correctly associated-3.0','Number of word pairs correctly associated-2.0')]
     
-    # Numeric memory
-    out_df['Change in Numeric Memory (max digits remembered)']=out_df['Maximum digits remembered correctly (Field ID: 4282)-3.0']-out_df['Maximum digits remembered correctly (Field ID: 4282)-2.0']
     
-    # Fluid intelligence
-    out_df['Change in Fluid Intelligence Score']=out_df['Fluid intelligence score (Field ID: 20016)-3.0']-out_df['Fluid intelligence score (Field ID: 20016)-2.0']
     
-    # Pairs matching cards
-    out_df['Change in Pairs matching (Number of incorrect matches)']=out_df['Number of incorrect matches in round (Field ID: 399)-3.2']-out_df['Number of incorrect matches in round (Field ID: 399)-2.2']
-    
-    # Matrix pattern completion
-    out_df['Change in Number of puzzles correctly solved (matrix)']=out_df['Number of puzzles correctly solved-3.0']-out_df['Number of puzzles correctly solved-2.0']
-    
-    # Tower rearranging
-    out_df['Change in Number of puzzles correct (tower)']=out_df['Number of puzzles correct-3.0']-out_df['Number of puzzles correct-2.0']
-    
-    # Paired associate learning
-    out_df['Change in Number of word pairs correctly associated']=out_df['Number of word pairs correctly associated-3.0']-out_df['Number of word pairs correctly associated-2.0']
-
+    for pair in cog_vars:
+        
+        
+        #Calculating raw change in cog pair
+        v = 'Change in {0}'.format(pair[0].rsplit('-')[0])
+        out_df[v]  = out_df[pair[0]] - out_df[pair[1]]
+        
+        #Calculating percentage change in cog pair
+        v = 'Percentage Change in {0}'.format(pair[0].rsplit('-')[0])
+        out_df[v]  = ( ((out_df[pair[0]] - out_df[pair[1]]) /  (out_df[pair[0]]))  *100 ) 
 
 
     return out_df
 
 
 
-def calculateCognitiveDeclineScore(ukbio=None, df=None):
+def calculateCognitiveDeclineScore(ukbio=None, df=None, percentage_thresh=0, missing_tolerance=0):
     """
     Currently generates a composite 'cognitive_decline_score-3.0' between instances 2 & 3 (imaging visits)
-    +1 point is added is the score on a test got 'worse' between instances 2 & 3.
+    +1 point is added if the score on a test changed by a given percentage' between instances 2 & 3. 
+    Deafult percentage is '0', i.e. any decline in a score will count, if '+20, improvements of 19% and any decrease in performance will count.
     
     Future to do's
-    - weight outcome by 'how much worse' the test score got
+   
     -include additional tests, instances etc
     -account for age. .
    
@@ -633,48 +642,65 @@ def calculateCognitiveDeclineScore(ukbio=None, df=None):
     ukbio : ukbio object.  Mandatory.
     
     df : pandas df loaded using ukbiobank-tools. Mandatory.
+    
+    percentage_thresh: int. Optional. Default: 0.
+    
+        This parameter determines how much of a percentage change in scoring is required before a '+1' cognitive decline score is to be added for that test.
+        E.g. if set to '-50', then the RT must have gotten worse by 50%, or the number of items remembered must have dropped by 50% ..
+
+    missing_thresh: int. optional, default 0.
+        
+        This parameter determine how many mising tests the calculation will tolerate.
+        E.g. if scores are missing for all tests, then a subject will by default recieve an overall score of 0. 
+        However, if the missing tolerance is 0, then any missing test will assign a NaN score to this subject.
 
     Returns
     -------
     out_df : pandas df containing cognitive decline score
     """
     
-    #TODO Check that 'Change in' cognitive vars exist in df, if not then run calculateChangeInCognitiveScore
+
+
+
+    cog_vars = ['Percentage Change in Maximum digits remembered correctly (Field ID: 4282)',
+                'Percentage Change in Fluid intelligence score (Field ID: 20016)',
+                'Percentage Change in Number of puzzles correctly solved',
+                'Percentage Change in Number of puzzles correct',
+                'Percentage Change in Number of word pairs correctly associated']
 
     
-    cds='cognitive_decline_score-3.0' #(cds : cognitive decline score)
+    #These are the cognitive vars for which a higher score means worse performance (e.g. reaction time / number of errors made). They are treated separately during the score calculation
+    cog_vars_inverted = ['Percentage Change in Mean time to correctly identify matches',
+                         'Percentage Change in Number of incorrect matches in round (Field ID: 399)']
     
+    
+    # Check that 'Change in' cognitive vars exist in df, if not then run calculateChangeInCognitiveScore
+    if not pd.Series(cog_vars+cog_vars_inverted).isin(df.columns).all():
+        raise ValueError('Change in cognitive scores not found in dataframe, try running calculateChangeInCognitiveScores() first')
+
+                  
     #Score starts at zero (+1 is added depending upon question response)
+    cds='cognitive_decline_score-3.0' #(cds : cognitive decline score)
     df[cds] = 0
     
-    # RT   (if reaction time at scan 2 is higher [(scan_2-scan_1)> 0] , add a cog decline point
-    v = 'Change in Reaction Time'
-    df.loc[(df[v] > 0), cds] = df[cds] + 1
+    # Setting cognitive score to nan based on tolerance
+    all_cog_vars= cog_vars+cog_vars_inverted
+    df['NumberOfNans'] = 0
+    for v in all_cog_vars:
+        df.loc[(df[v].isnull()), 'NumberOfNans'] = df['NumberOfNans'] + 1
+        
+    df.loc[(df['NumberOfNans'] > missing_tolerance) , cds] = np.nan
     
-    # Numeric memory (if digits remember at scan 2 are fewer (scan_2 - scan_1 <0))
-    v = 'Change in Numeric Memory (max digits remembered)'
-    df.loc[(df[v] < 0), cds] = df[cds] + 1
     
-    # Fluid Intelligence (if FIQ at scan 2 is lower (scan_2 - scan_1 <0))
-    v =  'Change in Fluid Intelligence Score'
-    df.loc[(df[v] < 0) , cds] = df[cds] + 1
+    #Assigning cognitive decline points
+    for v in cog_vars:   
+        df.loc[(df[v] < percentage_thresh), cds] = df[cds] + 1
+        
     
-    # Pairs matching  (if no of incorrect matches at scan 2 is higher  scan2 - scan1 > 0)
-    v ='Change in Pairs matching (Number of incorrect matches)'
-    df.loc[(df[v] > 0) , cds] = df[cds] + 1
-     
-    # Matrix puzzle  (if no of correct matches at scan 2 is lower  scan2 - scan1 < 0)
-    v = 'Change in Number of puzzles correctly solved (matrix)'
-    df.loc[(df[v] < 0) , cds] = df[cds] + 1
-    
-  
-    # Tower puzzle  (if no of correct at scan 2 is lower  scan2 - scan1 < 0)
-    v = 'Change in Number of puzzles correct (tower)'
-    df.loc[(df[v] < 0) , cds] = df[cds] + 1
-    
-    # Word pair association  (if no of correct matches at scan 2 is lower  scan2 - scan1 < 0)
-    v = 'Change in Number of word pairs correctly associated'
-    df.loc[(df[v] < 0) , cds] = df[cds] + 1
+    for v in cog_vars_inverted:
+        df.loc[(df[v] > -percentage_thresh) , cds] = df[cds] + 1
+         
+
     
     out_df=df.copy()
     

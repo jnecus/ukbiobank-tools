@@ -68,7 +68,7 @@ def filterByField(ukbio=None, df=None, fields_to_include=None, instances=None, a
     ----------
     ukbio : ukbio object, mandatory
     
-    df : pandas dataframe (currently only accepts FieldID headers ased column headers)
+    df : pandas dataframe (currently only accepts FieldID headers as column headers)
                            
     fields_to_include: Dictionary whereby keys: 'fields to include', values:'values to include'
     
