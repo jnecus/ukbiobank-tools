@@ -1,1 +1,6 @@
-from .ukbio_gui import *
+from .menu_frame import MenuFrame
+from .load_frame import LoadFrame
+from .ukbio_gui import open
+#from .menu_frame import MenuFrame
+from .select_variables import SelectVariablesFrame
+from .select_illness import SelectIllnessFrame
