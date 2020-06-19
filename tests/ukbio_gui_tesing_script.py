@@ -10,7 +10,7 @@ import wx
 import pickle
 # ukb=ukbiobank.ukbio(ukb_csv='C:/Users/Joe/Google Drive/Post Doc Dementia/UK Biobank/March2020_data_refreshes/ukb41831/all_ScanRescanSubjects_UKB_format.csv')
 
-x = open('C:/Users/Joe/Google Drive/Post Doc Dementia/UK Biobank/March2020_data_refreshes/ukb_pickle', 'rb')
+x = open('C:/Users/Joe/Google Drive/Post Doc Dementia/UK Biobank/March2020_data_refreshes/ukb41831/ukb41831_scanRescan_pickle', 'rb')
 
 #loading pickled ukbio object
 ukb = pickle.load(x)
@@ -32,4 +32,3 @@ gui.MenuFrame(wx.Frame,ukb)
 
 #to kill
 #app.Destroy()
-

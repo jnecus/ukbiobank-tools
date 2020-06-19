@@ -29,9 +29,9 @@ class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio):
 
 
         # Add the windows to tabs and name them.
-        nb.AddPage(self.tab1, "Self-Reported Illnesses")
-        nb.AddPage(self.tab2, "ICD 9 Diagnosis")
-        nb.AddPage(self.tab3, "ICD 10 Diagnosis")
+        nb.AddPage(self.tab1, "Self-Reported Non-Cancer Illnesses")
+        nb.AddPage(self.tab2, "ICD 9 Main Diagnosis")
+        nb.AddPage(self.tab3, "ICD 10 Main Diagnosis")
         
         
         #Submit button
@@ -57,8 +57,25 @@ class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio):
 
     
         selections = {}
-        selections['include_illnesses'] = (self_reported +icd9+icd10)
         
+        # Selections are saved as a key value pair whereby:
+            #key:  ukbiobank field ID (correspinding to self-report/icd9/icd10 column)
+            #values: selected illnessess
+            
+        #TODO: Include 'Secondary diagnoses', cancer illnesses, cause of death etc etc...
+        selections['include_illnesses'] = {'Non-cancer illness code, self-reported': self_reported,
+                                           'Diagnoses - main ICD9': icd9,
+                                           'Diagnoses - ICD10': icd10}
+        
+
+
+                                       
+        selections['include_illnesses_coded'] = {20002: ukb.nonCancerIllnessCoding['coding'][ukb.nonCancerIllnessCoding['meaning'].isin(self_reported)].tolist(),
+                                           41203: ukb.icd9Coding['coding'][ukb.icd9Coding['meaning'].isin(icd9)].tolist(),
+                                           41270: ukb.icd10Coding['coding'][ukb.icd10Coding['meaning'].isin(icd10)].tolist()}
+                                           
+                                          
+                                           
         #Setting selections, passing through parent MenuFrame
         parent.selectionsSetter(arg1 = selections)
 
@@ -88,8 +105,8 @@ class Tab(wx.Panel, ukbiobank.ukbio):
         elif diagnosisType=='ICD10':
             illness_list = ukb.icd10Coding.meaning.tolist()
         
-        #Variables checkbox
-        self.checkbox = wx.CheckListBox(self,choices=illness_list)
+        # Variables checkbox
+        self.checkbox = wx.CheckListBox(self, choices=illness_list)
         
 
         my_sizer.Add(self.checkbox,1, wx.EXPAND)    

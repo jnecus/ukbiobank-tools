@@ -9,7 +9,13 @@ UKBiobank data loading utilities
 import pandas as pd
 import re
 import numpy as np
+import csv
+import time
 
+
+        
+        
+#This initial function takes around 15 seconds..TODO: make more efficient.
 def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     """
     Parameters
@@ -30,11 +36,16 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
 
     """
     
-    #Gathering available fields and instances
-    fieldnames=pd.read_csv(ukb_csv,nrows=0).columns.tolist()
+    
+    # Gathering available fields and instances
+    with open(ukb_csv, 'r') as infile:
+        reader = csv.DictReader(infile)
+        fieldnames = reader.fieldnames
+        
 
     
-    
+    fieldnames = list(fieldnames)
+        
     field_instance_array_df=pd.DataFrame()
     
     for f in fieldnames:
@@ -79,10 +90,13 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     result_duplicate.loc[:,'field_name']=result_duplicate['new_field_name']
     result_duplicate.drop(columns='new_field_name',inplace=True)
     
+    
+    
+    
     result2=result_duplicate.append(result_non_duplicate)
     
     
-
+    result2['field_name_instance_array'] = result2['field_name'].astype(str)+'-'+result2['instance'].astype(str)+'.'+result2['array'].astype(str)
 
 
     return result2
@@ -129,6 +143,31 @@ def getFieldIdsInstancesFromCategoryId(ukbio, field_ids=None):
 
     return field_ids
 
+def getFieldIdsInstancesFromNamesInstances(ukbio, field_names=None):
+    """
+  
+    Parameters
+    ----------
+    ukbio : ukbio object
+    fieldNames : List of strings e.g. 'Sex-0.0' 
+
+    Returns
+    -------
+    List of ALL ukbiobank fieldId_instance_array's associated with given field category 'id-instance.array' .
+
+    """
+
+
+
+    field_instance_array_df_temp=ukbio.field_instance_array_df.copy()    
+    field_ids=field_instance_array_df_temp[field_instance_array_df_temp['field_name_instance_array'].isin(field_names)]['id_instance_array'].tolist()
+
+    return field_ids
+
+
+
+
+
 
 def getFieldIdsFromNames(ukbio, field_names=None):
     """
@@ -174,7 +213,10 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
     not_found=[]
     all_field_names_and_ids=ukbio.field_instance_array_df['field_name'].unique().tolist()
     all_field_names_and_ids.extend(ukbio.field_instance_array_df['id_instance_array'].tolist())
-    all_field_names_and_ids.extend(ukbio.field_instance_array_df['field_id'].tolist())
+    all_field_names_and_ids.extend(ukbio.field_instance_array_df['field_id'].tolist())    
+    all_field_names_and_ids.extend(ukbio.field_instance_array_df['field_name'].tolist())
+    all_field_names_and_ids.extend(ukbio.field_instance_array_df['field_name_instance_array'].tolist())
+    
     
     for f in fields:
         if f not in all_field_names_and_ids and f!='eid':
@@ -200,14 +242,23 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
         else:
             new_fields.append(f)
     
-    #Converting field cat to id-instance-arrays
+    
+    
+    
+    #Converting field cat to id-instance-arrays (e.g. '31' -> '31-0.0')
     if len(field_id_to_convert)>0:
         new_fields.extend(getFieldIdsInstancesFromCategoryId(ukbio, field_ids=field_id_to_convert))
 
     
-    #Converting text to id
+    #Converting text to id (e.g. 'Sex' ->'31-0.0')
     if len(fieldname_to_convert)>0:
         new_fields.extend(getFieldIdsFromNames(ukbio, field_names=fieldname_to_convert))
+    
+    
+    #Converting fieldname-instance.array format to fieldID-instance.array format (e.g. 'Sex-0.0' -> '31-0.0')
+    if len (fieldname_to_convert)>0:
+        new_fields.extend(getFieldIdsInstancesFromNamesInstances(ukbio, field_names=fieldname_to_convert))
+    
     
     
     if 'eid' not in fields:
@@ -327,9 +378,9 @@ def fieldNamesToIds(ukbio=None, df=None):
     
     
     new_fields = []
-    #Check if field finishes with '-(instance).(array)' format, if so 
+    #Check if field is a series of integers in '(field)-(instance).(array)' format, if so 
     for c in cols:
-        if re.match(".*-[0-9]*\.[0-9]*$", c) is not None and c!='eid':
+        if re.match("[0-9]*-[0-9]*\.[0-9]*$", c) is None and c!='eid':
            
             
             fieldNameParts=c.split('-')[:-1] # get all parts of string up until the final '-' (i.e. the name)
@@ -414,8 +465,8 @@ def addFields(ukbio=None, df=None, fields=None):
     
     df: UKbiobank pandas dataframe
     
-    fields : List of strings, Mandatory
-        Accepts UKB field ID or text string (or mixed), e.g. '21-0.0' or 'Sex'.
+    fields : List, Mandatory
+        Accepts UKB field ID or text string (or mixed), e.g. '31-0.0' or 'Sex'.
 
 
     Returns
@@ -425,20 +476,26 @@ def addFields(ukbio=None, df=None, fields=None):
 
     """
     
-    #If no df passed, then initiliase empty df
-    if df == None:
+    # Convert to list
+    if not isinstance(fields,list):
+        fields = [fields]
+    
+    
+    # If no df passed, then initiliase empty df
+    if df is None:
         in_df = False
         df = pd.DataFrame()
     else:
         in_df = True
     
-    #convert input to df if not (e.g. if just a series of eids)
+    # Convert input to df if not (e.g. if just a series of eids)
     if not isinstance(df, pd.DataFrame):
         df = df.to_frame()
 
     
-    #Append 'eid' to list of required fields
+    # Append 'eid' to list of required fields
     if 'eid' not in fields:
+        fields = list(fields)
         fields.append('eid')
     
     # Get extra fields
@@ -537,7 +594,7 @@ In sensitive analysis, we further constructed a weighted sleep score based on th
     
     
     
-    
+#TODO: fix 'A value is trying to be set on a copy of a slice from a DataFrame' error (change to df.loc[])
 def removeOutliers(df = None, std = 3, cols = None):
     """
     
@@ -589,8 +646,8 @@ def  calculateChangeInCognitiveScores(ukbio=None, df=None):
      - 'Number of puzzles correctly solved -> 'Change in x
      - 'Number of puzzles correct -> 'Change in x
      - 'Number of word pairs correctly associated -> Change in x
-        
-    
+     - Duration to complete alphanumeric path (trail #2) (Field ID: 6350)  -> Change in x
+     - 'Number of symbol digit matches made correctly (Field ID: 23324) -> Change in x
         
     
     
@@ -606,7 +663,9 @@ def  calculateChangeInCognitiveScores(ukbio=None, df=None):
                 ('Number of incorrect matches in round (Field ID: 399)-3.2','Number of incorrect matches in round (Field ID: 399)-2.2'),
                 ('Number of puzzles correctly solved-3.0','Number of puzzles correctly solved-2.0'),
                 ('Number of puzzles correct-3.0','Number of puzzles correct-2.0'),                
-                ('Number of word pairs correctly associated-3.0','Number of word pairs correctly associated-2.0')]
+                ('Number of word pairs correctly associated-3.0','Number of word pairs correctly associated-2.0'),
+                ('Duration to complete alphanumeric path (trail #2) (Field ID: 6350)-3.0','Duration to complete alphanumeric path (trail #2) (Field ID: 6350)-2.0'),
+                 ('Number of symbol digit matches made correctly (Field ID: 23324)-3.0','Number of symbol digit matches made correctly (Field ID: 23324)-2.0')]
     
     
     
@@ -666,13 +725,15 @@ def calculateCognitiveDeclineScore(ukbio=None, df=None, percentage_thresh=0, mis
                 'Percentage Change in Fluid intelligence score (Field ID: 20016)',
                 'Percentage Change in Number of puzzles correctly solved',
                 'Percentage Change in Number of puzzles correct',
-                'Percentage Change in Number of word pairs correctly associated']
+                'Percentage Change in Number of word pairs correctly associated',
+                'Percentage Change in Number of symbol digit matches made correctly (Field ID: 23324)']
 
     
     #These are the cognitive vars for which a higher score means worse performance (e.g. reaction time / number of errors made). They are treated separately during the score calculation
     cog_vars_inverted = ['Percentage Change in Mean time to correctly identify matches',
-                         'Percentage Change in Number of incorrect matches in round (Field ID: 399)']
-    
+                         'Percentage Change in Number of incorrect matches in round (Field ID: 399)',
+                         'Percentage Change in Duration to complete alphanumeric path (trail #2) (Field ID: 6350)']
+        
     
     # Check that 'Change in' cognitive vars exist in df, if not then run calculateChangeInCognitiveScore
     if not pd.Series(cog_vars+cog_vars_inverted).isin(df.columns).all():
@@ -713,6 +774,25 @@ def calculateCognitiveDeclineScore(ukbio=None, df=None, percentage_thresh=0, mis
 
 
 
+def meltByInstance(ukbio=None, df=None):
+    """
+    
+
+    Parameters
+    ----------
+    ukbio : ukbio object.  Mandatory.
+    
+    df : pandas df loaded using ukbiobank-tools. Mandatory.
+
+    Returns
+    -------
+    out_df : pandas df which has been re-fromatted to include the following columns: "Variable | Instance | Value"
+    """
+    
+    df = df.melt(id_vars='eid')
+    
+    df[['variable','instance','array']]=df.variable.str.extract(pat='^(.*)-(.*)\.(.*)$')
 
 
 
+    return df

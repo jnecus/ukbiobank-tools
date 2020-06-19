@@ -8,7 +8,7 @@ UKBiobank data filtering utilities
 """
 import pandas as pd
 import re
-from ukbiobank.utils import fieldNamesToIds
+from ukbiobank.utils import fieldNamesToIds, addFields
 
 def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
     """
@@ -20,9 +20,9 @@ def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
     
     df : pandas dataframe (generated using ukbio loadCsv)
     
-    instances : List of integers
+    instances : List of integers. Default is none (include all instances)
         
-    arrays : List of integers
+    arrays : List of integers.  Default is none (include all arrays)
         
 
     Returns
@@ -62,7 +62,7 @@ def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
 
 
 
-def filterByField(ukbio=None, df=None, fields_to_include=None, instances=None, arrays=None):
+def filterByField(ukbio=None, df=None, fields_to_include=None, instances=[0,1,2,3], arrays=None):
     """  
     Parameters
     ----------
@@ -71,7 +71,9 @@ def filterByField(ukbio=None, df=None, fields_to_include=None, instances=None, a
     df : pandas dataframe (currently only accepts FieldID headers as column headers)
                            
     fields_to_include: Dictionary whereby keys: 'fields to include', values:'values to include'
-    
+    *FIELDS IN FIELDS_TO_INCLUDE MUST BE IN FIELD_ID FORM* e.g. '20002' (not 'Self-reported Illness') *
+    *VALUES IN FIELDS_TO_INCLUDE MUST BE IN CODED FORM* e.g. '1074', (not 'angina') *
+   
     instances : list of integers
     
     arrays : list of integers
@@ -85,11 +87,36 @@ def filterByField(ukbio=None, df=None, fields_to_include=None, instances=None, a
     
     """
     
+    # Account for df = None, or if fields are not found in df, then add them
+    if df is None:
+        # Add all fields_to include
+        df = addFields(ukbio=ukbio, fields=list(fields_to_include.keys()))
+    else:
+        
+        # Convert df headings to fieldid-instance.array
+        df = fieldNamesToIds(ukbio=ukbio, df=df)
+        
+        # Checking for missing fields
+        df_fields = []
+        for f in df.columns.tolist():
+            df_fields.append(f.split('-')[0])
+            
+        unique_df_fields = list(set(df_fields))
+            
+        fields_to_add = []
+        for f in list(fields_to_include.keys()):
+            if f not in unique_df_fields:
+                fields_to_add.append(f)
+            
+        if len(fields_to_add)>0:
+            df = addFields(ukbio=ukbio, df=df, fields=fields_to_add)
+ 
+    
+ 
     #todo (account for text/ids/mixture etc...)
     #convert keys/values from text --> id 
     
     
-    #Generate list of columns to iterate (i.e. accounting for field-instance.array)
     
     
     #Once all headers are raw Field IDs, and table values are encoded IDs..
@@ -167,7 +194,7 @@ def getAlgorithmicAllCauseDementia(ukbio=None, df=None):
     icd_9_main_field=41203
     icd_9_secondary_field=41205
     icd_9_all_dementia=[290.2, 290.3, 290.4, 291.2, 294.1, 331.0, 331.1, 331.2, 331.5]
-    
+    #TODO: Check decimal points here. (is data in biobank dataframe coded using decimal point??)
     
     #Self reported illness
     self_reported_illness_field=20002

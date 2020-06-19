@@ -4,6 +4,13 @@
 Loading and testing ukbio features with ukbiobank data.
 
 
+***THIS ALL NEEDS RE-WRITING WITH NEW MODULAR STRUCTURE . . ***
+
+E.G. import ukbiobank.filtering
+    ukbiobank.filtering.filterByField() . . 
+
+
+
 """
 
 

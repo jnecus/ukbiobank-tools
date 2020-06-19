@@ -38,7 +38,7 @@ class SelectVariablesFrame(wx.Frame, ukbiobank.ukbio):
         
         selections = {}
         selections['include_variables'] = list(self.checkbox.GetCheckedStrings())
-        
+                
         #Setting selections, passing through parent MenuFrame
         parent.selectionsSetter(arg1 = selections)
 

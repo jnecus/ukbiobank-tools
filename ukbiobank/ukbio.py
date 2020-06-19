@@ -9,7 +9,7 @@ Created on Fri Mar 27 12:38:10 2020
 from .utils import getFieldsInstancesArrays
 import pandas as pd
 import os
-
+import time
 
 class ukbio():
 
@@ -37,11 +37,9 @@ class ukbio():
         file_path = os.path.dirname(__file__)       
         self.csv_path=ukb_csv
         
-        
-        
-        #Paths may fail between unix / windows due to hard-coded backslash below
+                #Paths may fail between unix / windows due to hard-coded backslash below
         self.data_dict=pd.read_csv(file_path+'\data_coding\Data_Dictionary_Showcase.csv')
-        
+                
         #Illness/medication codings
         #TODO continue insert coding dictionaries.. (for medications etc..)
         self.nonCancerIllnessCoding=pd.read_table(file_path+'\data_coding\coding6.tsv')
