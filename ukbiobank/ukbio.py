@@ -2,7 +2,7 @@
 """
 Created on Fri Mar 27 12:38:10 2020
 
-@author: Joe
+@author: jnecus
 """
 
 
@@ -21,7 +21,7 @@ class ukbio():
         Parameters
         ----------
         ukb_csv : String, mandatory
-           Path to ukbiobank csv file. .
+           Path to ukbiobank csv file. 
         
         Returns
         -------
@@ -37,7 +37,7 @@ class ukbio():
         file_path = os.path.dirname(__file__)       
         self.csv_path=ukb_csv
         
-                #Paths may fail between unix / windows due to hard-coded backslash below
+        #Paths may fail between unix / windows due to hard-coded backslash below
         self.data_dict=pd.read_csv(file_path+'\data_coding\Data_Dictionary_Showcase.csv')
                 
         #Illness/medication codings

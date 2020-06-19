@@ -15,7 +15,7 @@ import time
 
         
         
-#This initial function takes around 15 seconds..TODO: make more efficient.
+#TODO: make more efficient (takes ~15s)
 def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     """
     Parameters
