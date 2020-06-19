@@ -19,7 +19,8 @@ In progress . . .
 
 
 1. Clone repository
-2. Enter ukbiobank-tools folder (containing setup.py) and run command ```pip install . ```
+2. Enter ukbiobank-tools folder (containing setup.py) and run command ```python setup.py install```
+
 
 
 
