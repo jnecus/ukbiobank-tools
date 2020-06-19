@@ -12,9 +12,9 @@ with open('LICENSE') as f:
 
 	
 def list_requirements():
-	with open('requirements.txt', 'r') as f:
+    with open('requirements.txt', 'r') as f:
         reqs = [line.strip() for line in f]
-		return reqs 
+        return reqs 
 		
 	
 	
