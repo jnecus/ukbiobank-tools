@@ -10,6 +10,15 @@ with open('README.md') as f:
 with open('LICENSE') as f:
     license = f.read()
 
+	
+def list_requirements():
+	with open('requirements.txt', 'r') as f:
+        reqs = [line.strip() for line in f]
+		return reqs 
+		
+	
+	
+	
 setup(
     name='ukbiobank-tools',
     version='0.1.0',
@@ -18,6 +27,7 @@ setup(
     author_email='joenecus@gmail.com',
     url='https://github.com/jnecus/ukbiobank-tools',
     license=license,
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=find_packages(exclude=('tests', 'docs')),
+	install_requires=list_requirements()
 )
 
