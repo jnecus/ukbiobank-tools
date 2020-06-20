@@ -10,14 +10,14 @@ import pandas as pd
 import re
 import numpy as np
 import csv
-import time
 
 
         
         
 #TODO: make more efficient (takes ~15s)
 def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
-    """
+    """Docstring
+    
     Parameters
     ----------
     ukbcsv : String path to ukbiobank csv file
@@ -462,12 +462,18 @@ def addFields(ukbio=None, df=None, fields=None):
     Parameters
     ----------
     ukbio : ukbio object
+        ukbiobank.ukbio object
     
-    df: UKbiobank pandas dataframe
+    df : pandas dataframe
+        df containing ukbiobank data 
     
     fields : List, Mandatory
         Accepts UKB field ID or text string (or mixed), e.g. '31-0.0' or 'Sex'.
-
+        
+    Example usage::
+        
+        df = ukbiobank.utils.addFields(ukbio = ukb, df = df, fields = ['Sex'])
+    
 
     Returns
     -------
