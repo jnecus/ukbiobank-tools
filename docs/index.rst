@@ -1,22 +1,26 @@
-.. sample documentation master file, created by
-   sphinx-quickstart on Mon Apr 16 21:22:43 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Ukbiobank-tools
+===============
+.. Note to self: .. "xxx"  represents a comment
 
-Welcome to sample's documentation!
-==================================
-
-Contents:
+.. "to include a file e.g. readme :include:: ../README.md"
 
 .. toctree::
-   :maxdepth: 2
-   PAGE 1  title here <demonstrating_functionality>
-   PAGE 1  title here <demonstrating_functionality2>
+   :caption: Contents
+   :maxdepth: 1
+   
+   about
+   installing
+   examples/examples 
+   api/api
+   changelog
 
-Indices and tables
-==================
+.. "toctree::
+    :maxdepth: 2
+    :numbered:
+    :caption: Demo Documentation
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    demo/structure
+    demo/demo
+    demo/lists_tables
+    demo/api"
 

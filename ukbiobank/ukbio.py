@@ -9,29 +9,36 @@ Created on Fri Mar 27 12:38:10 2020
 from .utils import getFieldsInstancesArrays
 import pandas as pd
 import os
-import time
 
-class ukbio():
+class ukbio:
+    
+    """Docstring for ukbio class.       
+        
+    Parameters
+    ----------
+    ukb_csv : String, mandatory
+       Path to ukbiobank csv file. 
+    
+    
+    Example usage::
+        
+        import ukbiobank
+        ukb = ukbiobank.ukbio(ukb_csv='path/to/ukbiobank_data.csv')
+    
+    
+    
+    Returns
+    -------
+    ukbio object.
+        ukbio objects are required as an input when using ukbiobank-tools functions. 
+        ukbio objects contain import information such as:
+                - variable codings
+                - path to ukbiobank csv file
+        
+    """
 
     
-    def __init__(self, ukb_csv=None):
-        """
-        
-        
-        Parameters
-        ----------
-        ukb_csv : String, mandatory
-           Path to ukbiobank csv file. 
-        
-        Returns
-        -------
-        ukbio object.
-            ukbio objects are required as an input when using ukbiobank-tools functions. 
-            ukbio objects contain import information such as:
-                    - variable codings
-                    - path to ukbiobank csv file
-        
-        """
+    def __init__(self, ukb_csv=None):        
         
         
         file_path = os.path.dirname(__file__)       
