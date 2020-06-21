@@ -12,7 +12,7 @@ import ukbiobank
 
 class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio):
     def __init__(self, parent, ukb):
-        super().__init__(parent=None, title='Select Illness', size=wx.DefaultSize)
+        super().__init__(parent=parent, title='Select Illness', size=wx.DefaultSize)
 
         # Create a panel and notebook (tabs holder)
         p = wx.Panel(self)

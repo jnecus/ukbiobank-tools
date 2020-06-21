@@ -21,9 +21,7 @@ class LoadFrame(wx.Frame):
         
         self.my_csv =  wx.FilePickerCtrl(panel)
         my_sizer.Add(self.my_csv, 0, wx.EXPAND, 5)  
-        
-        #self.my_csv = wx.FilePickerCtrl(panel)
-        
+                
         
         my_btn = wx.Button(panel,label='Load CSV')
         my_btn.Bind(wx.EVT_BUTTON, self.on_press)
@@ -37,10 +35,8 @@ class LoadFrame(wx.Frame):
     def on_press(self, event):
         value = self.my_csv.GetPath()
         if not value:
-            print("You didn't enter anything!")
-        else:
-            print(f'You typed: "{value}"')
-            
+            wx.MessageDialog(self, message="You didn't enter anything!").ShowModal()
+        else:           
             #Loading menu...
             self.Close()
             busy =  pybusyinfo.PyBusyInfo(message='Loading csv, please wait...')
