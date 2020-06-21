@@ -87,16 +87,16 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     result_non_duplicate=result[~result['field_id'].isin(duplicate_names_ids)]
     
     
+    result_duplicate = result_duplicate.copy()
     
     #TODO FIX SettingCopyWarning Here....
-    value = result_duplicate.loc[:, 'field_name'] + ' (Field ID: ' + result_duplicate.loc[:, 'field_id'].astype(str)+ ')'
-    result_duplicate.loc[:, 'new_field_name'] = value.copy()
+    result_duplicate['new_field_name'] = result_duplicate['field_name'].astype(str) + ' (Field ID: ' + result_duplicate['field_id'].astype(str)+ ')'
+    
+    
     
     result_duplicate.drop(labels=['field_name'],axis=1,inplace=True)
     
-    result_duplicate.rename(columns={'new_field_name':'field_name'}, inplace=True)# loc[:,'field_name']=result_duplicate['new_field_name']
-    
-    #result_duplicate.drop(columns='new_field_name',inplace=True)
+    result_duplicate.rename(columns={'new_field_name':'field_name'}, inplace=True)
     
     
     
