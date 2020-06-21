@@ -7,8 +7,6 @@ Created on Wed Mar 25 13:33:29 2020
 UKBiobank data loading utilities
 """
 import wx
-#import ukbiobank 
-#import ukbiobank.gui
 from ukbiobank.gui import LoadFrame
 
 
@@ -17,11 +15,9 @@ from ukbiobank.gui import LoadFrame
 #Open GUI
 def open():    
     app = wx.App()
-    frame = LoadFrame()
+    LoadFrame()
     app.MainLoop()
     return
-
-
 
 
 

@@ -8,7 +8,7 @@ import ukbiobank
 class SelectVariablesFrame(wx.Frame, ukbiobank.ukbio):
         
     def __init__(self, parent, ukb):
-        super().__init__(parent=None, title='UKBiobank-tools checkbox')
+        super().__init__(parent=parent, title='UKBiobank-tools checkbox')
         panel = wx.Panel(self)        
         
         my_sizer = wx.BoxSizer(wx.VERTICAL)      

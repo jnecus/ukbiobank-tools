@@ -24,6 +24,8 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         self.ukb_object = ukb
         self.ukb_object.SELECTIONS = None #initialising variable/filter selections to None 
         
+        # Close all chidren on MenuFrame close.
+        self.Bind( wx.EVT_CLOSE, self.ParentFrameOnClose )
         
         panel = wx.Panel(self)        
         my_sizer = wx.GridSizer(4, 1, 10, 10)  # rows, cols, vgap, hgap
@@ -56,9 +58,11 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         panel.SetSizer(my_sizer)        
         self.Show()
         
-
     
-        
+    
+    def ParentFrameOnClose(self, event):
+            self.DestroyChildren()  ## Destroy the children first
+            self.Destroy()    ## Destroy the parent then.
 
     # Loading SelectVariablesFrame
     def SelectVariablesFrameButton(self, event, ukb):        
@@ -72,7 +76,7 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         return
     
     
-    #L oading SelectIllnessFrame
+    # Loading SelectIllnessFrame
     def SelectIllnessFrameButton(self, event, ukb):
         if self.selectIllnessPressed == False:
             self.selectIllnessFrame = SelectIllnessFrame(self, ukb)
@@ -84,8 +88,9 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         return
     
     # Function to gather all options selected
-    def selectionsGetter(self, event):       
-        print(self.ukb_object.SELECTIONS)
+    def selectionsGetter(self, event):
+        wx.MessageDialog(self, message="This function is not yet available").ShowModal()
+        #print(self.ukb_object.SELECTIONS)
         return 
     
     
@@ -101,9 +106,6 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         return 
     
     
-        
-        
-        
     
     def OutputCsvFrameButton(self, event, ukb):
         
@@ -111,52 +113,6 @@ class MenuFrame(wx.Frame, ukbiobank.ukbio):
         
         return
     
-        
-        # with wx.FileDialog(self, "Save output as csv", wildcard="csv files (*.csv)|*.csv",
-        #                    style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
-    
-        #     if fileDialog.ShowModal() == wx.ID_CANCEL:
-        #         return     # the user changed their mind
-    
-        #     # Getting filepath
-        #     pathname = fileDialog.GetPath()
-            
-        #     # Getting selections 
-        #     s = self.ukb_object.SELECTIONS 
-            
-        #     if s == None:
-        #         print('No selections were made!')
-            
-        #     else:
-            
-        #         # Adding fields to dataframe
-        #         if 'include_variables' in s and len(s['include_variables']) > 0:
-        #             df = ukbiobank.utils.addFields(ukbio=self.ukb_object, fields=s['include_variables'])
-                
-        #         # Filtering dataframe according to 'include_illness' selections
-        #         if 'include_illnesses' in s and len(s['include_illnesses_coded']) > 0:                
-        #             df = ukbiobank.filtering.filterByField(ukbio=self.ukb_object, df=df, fields_to_include=s['include_illnesses_coded'])
-                
-                
-        #         try:
-        #             # Saving
-        #             df.to_csv(pathname)
-    
-        #         except IOError:
-        #             wx.LogError("Cannot save current data in file '%s'." % pathname)
-                
-            
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
