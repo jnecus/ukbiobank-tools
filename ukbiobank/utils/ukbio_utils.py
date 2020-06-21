@@ -61,6 +61,8 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
         
 
     field_instance_array_df[["field","instance","array"]]=field_instance_array_df[["field","instance","array"]].apply(pd.to_numeric)
+    
+    
     result=pd.merge(field_instance_array_df,data_dict[['FieldID','Field']],left_on='field',right_on='FieldID')
         
     
@@ -80,15 +82,21 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     duplicate_names_ids=duplicate_names.field_id.unique().tolist()
 
     
-    #Splitting duplicated from non-duplicate in order to append name columbn for duplicate (couldn't find a way to achieve this in one go..)
-    #This way is verbose :(  ....
+    #Splitting duplicated from non-duplicate in order to append name column for duplicate (couldn't find a way to achieve this in one go..)
     result_duplicate=result[result['field_id'].isin(duplicate_names_ids)]
     result_non_duplicate=result[~result['field_id'].isin(duplicate_names_ids)]
     
-    result_duplicate.loc[:,'new_field_name']=result_duplicate['field_name']+ ' (Field ID: ' + result_duplicate['field_id'].astype(str)+ ')'
-    result_duplicate.drop(columns='field_name',inplace=True)
-    result_duplicate.loc[:,'field_name']=result_duplicate['new_field_name']
-    result_duplicate.drop(columns='new_field_name',inplace=True)
+    
+    
+    #TODO FIX SettingCopyWarning Here....
+    value = result_duplicate.loc[:, 'field_name'] + ' (Field ID: ' + result_duplicate.loc[:, 'field_id'].astype(str)+ ')'
+    result_duplicate.loc[:, 'new_field_name'] = value.copy()
+    
+    result_duplicate.drop(labels=['field_name'],axis=1,inplace=True)
+    
+    result_duplicate.rename(columns={'new_field_name':'field_name'}, inplace=True)# loc[:,'field_name']=result_duplicate['new_field_name']
+    
+    #result_duplicate.drop(columns='new_field_name',inplace=True)
     
     
     
