@@ -2,8 +2,6 @@
 
 import wx
 import ukbiobank 
-#from .menu_frame import MenuFrame
-#from ukbiobank.gui import MenuFrame
 
 class SelectVariablesFrame(wx.Frame, ukbiobank.ukbio):
         
