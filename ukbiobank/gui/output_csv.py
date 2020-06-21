@@ -30,7 +30,7 @@ class OutputCsvFrame(wx.Frame, ukbiobank.ukbio):
             s = ukb.SELECTIONS 
             
             if s is None:
-                print("No selections were made")
+                wx.MessageDialog(self, message="No selections were made.").ShowModal()
                 return
             
             else:
