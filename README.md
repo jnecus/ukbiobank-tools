@@ -12,8 +12,7 @@ UKBiobank-tools is a simple application enabling the filtering and pre-processin
 
 ### Viewing documentation 
 
-In progress . . .
-
+https://ukbiobank-tools.readthedocs.io/en/latest/
 
 ## Contributing
 
