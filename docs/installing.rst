@@ -15,7 +15,6 @@ Option 1. Install via pip
     pip install ukbiobank-tools
 
 
-
 To upgrade to latest version
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
