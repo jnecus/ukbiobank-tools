@@ -1,1 +1,1 @@
-sphinxcontriib-httpdomain2
+sphinx==3.1.1
