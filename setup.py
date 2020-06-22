@@ -21,7 +21,7 @@ def list_requirements():
 	
 setup(
     name='ukbiobank-tools',
-    version='0.1.8',
+    version='0.1.9',
     description='Useful tools for working with UK Biobank meta-data',
     author='Joe Necus',
     author_email='joenecus@gmail.com',
