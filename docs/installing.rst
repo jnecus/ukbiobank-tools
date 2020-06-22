@@ -5,6 +5,31 @@
 Installation
 ************
 
+
+Install via pip
+---------------
+
+
+.. code:: console
+
+    pip install ukbiobank-tools
+
+
+
+To upgrade to latest version
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. code:: console
+
+    pip install ukbiobank-tools --upgrade
+
+
+
+Clone and install via setup.py
+------------------------------
+
+
 1. Clone repository from https://github.com/jnecus/ukbiobank-tools
 
 .. code:: console

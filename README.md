@@ -15,23 +15,6 @@ UKBiobank-tools is a simple application enabling the filtering and pre-processin
 In progress . . .
 
 
-## Installation
-
-
-1. Clone repository
-2. Enter ukbiobank-tools folder (containing setup.py) and run command ```python setup.py install```
-
-
-
-
-
-### To launch the GUI:
-
-```
-import ukbiobank.gui
-ukbiobank.gui.open()
-```
-
 ## Contributing
 
 Feel free to contribute via pull requests
