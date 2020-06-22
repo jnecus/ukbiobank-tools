@@ -1,1 +1,1 @@
-sphinx
+sphinxcontriib-httpdomain2
