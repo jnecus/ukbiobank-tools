@@ -3,9 +3,10 @@
 
 name: Upload Python Package to PyPI
 
-on: [push, pull_request]
+on: 
+  push:
     paths:
-      - 'setup.py'
+      - '*setup.py'
   
 
 jobs:
