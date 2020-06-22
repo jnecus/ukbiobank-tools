@@ -3,11 +3,9 @@
 
 name: Upload Python Package to PyPI
 
-on:
-  push:
-    branches: master
-  pull_request:
-    branches: master
+on: push [push, pull_request]
+    paths:
+      - setup.py
   
 
 jobs:
