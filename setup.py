@@ -21,16 +21,14 @@ def list_requirements():
 	
 setup(
     name='ukbiobank-tools',
-    version='0.1.2',
+    version='0.1.3',
     description='Useful tools for working with UK Biobank meta-data',
     author='Joe Necus',
     author_email='joenecus@gmail.com',
     url='https://github.com/jnecus/ukbiobank-tools',
-    license=license,
-    packages=find_packages(exclude=('tests', 'docs')),
-	package_data = {'ukbiobank/data_coding': ['*']},
+    license=license,	
+	packages=find_packages(include=["ukbiobank"]),
+    package_data={"": ["data_coding/*"]},
 	install_requires=list_requirements()
 )
 
-#package_data = {'ukbiobank/data_coding': ['*']}
-#This line causes data_coding to be included as a package (it would normally be one of the folders ignored by find_packages
