@@ -14,7 +14,7 @@ import csv
 
         
         
-#TODO: make more efficient (takes ~15s)
+
 def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     """Docstring
     
@@ -48,6 +48,7 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
         
     field_instance_array_df=pd.DataFrame()
     
+    #TODO: make for loop more efficient (takes ~15s)
     for f in fieldnames:
         
         if f=='eid':
@@ -82,28 +83,17 @@ def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
     duplicate_names_ids=duplicate_names.field_id.unique().tolist()
 
     
-    #Splitting duplicated from non-duplicate in order to append name column for duplicate (couldn't find a way to achieve this in one go..)
+    #Splitting duplicated from non-duplicate in order to append name column for duplicate
     result_duplicate=result[result['field_id'].isin(duplicate_names_ids)]
     result_non_duplicate=result[~result['field_id'].isin(duplicate_names_ids)]
     
     
     result_duplicate = result_duplicate.copy()
-    
-    #TODO FIX SettingCopyWarning Here....
     result_duplicate['new_field_name'] = result_duplicate['field_name'].astype(str) + ' (Field ID: ' + result_duplicate['field_id'].astype(str)+ ')'
-    
-    
-    
     result_duplicate.drop(labels=['field_name'],axis=1,inplace=True)
-    
     result_duplicate.rename(columns={'new_field_name':'field_name'}, inplace=True)
     
-    
-    
-    
     result2=result_duplicate.append(result_non_duplicate)
-    
-    
     result2['field_name_instance_array'] = result2['field_name'].astype(str)+'-'+result2['instance'].astype(str)+'.'+result2['array'].astype(str)
 
 
@@ -165,14 +155,10 @@ def getFieldIdsInstancesFromNamesInstances(ukbio, field_names=None):
 
     """
 
-
-
     field_instance_array_df_temp=ukbio.field_instance_array_df.copy()    
     field_ids=field_instance_array_df_temp[field_instance_array_df_temp['field_name_instance_array'].isin(field_names)]['id_instance_array'].tolist()
 
     return field_ids
-
-
 
 
 
@@ -515,11 +501,16 @@ def addFields(ukbio=None, df=None, fields=None):
     # Get extra fields
     new_df = loadCsv(ukbio, fields=fields)
         
-    #TODO: Deal with duplicate columns (i.e. same columns may exist in name or id form in input df)
     
     # Merge dataframes
     if  in_df is True:
-        out_df=df.merge(new_df, on='eid', how='inner')
+        # Ignoring duplicate columns
+        cols_to_use = new_df.columns.difference(df.columns)
+        cols_to_use = cols_to_use.tolist()
+        cols_to_use.append('eid')
+        
+        # Merging
+        out_df=df.merge(new_df[cols_to_use], on='eid', how='inner')
     else:
         out_df = new_df.copy()
         
@@ -605,10 +596,7 @@ In sensitive analysis, we further constructed a weighted sleep score based on th
     
     
 
-    
-    
-    
-#TODO: fix 'A value is trying to be set on a copy of a slice from a DataFrame' error (change to df.loc[])
+        
 def removeOutliers(df = None, std = 3, cols = None):
     """
     
@@ -629,8 +617,10 @@ def removeOutliers(df = None, std = 3, cols = None):
     
     for c in cols:
         upper_limit, lower_limit = (df[c].mean() + 3*df[c].std()), (df[c].mean() - 3*df[c].std())
-        df[c][df[c] > upper_limit] = np.nan
-        df[c][df[c] < lower_limit] = np.nan
+        
+        
+        df.loc[(df[c] > upper_limit), c] = np.nan
+        df.loc[(df[c] < lower_limit), c] = np.nan
     
     return df
 
