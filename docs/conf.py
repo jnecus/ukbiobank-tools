@@ -20,8 +20,6 @@ def is_development_build():
 if is_development_build():
     sys.path.insert(0, os.path.abspath('..'))
 
-	
-#sys.path.append(os.path.abspath('./demo/'))
 
 # Append location of ukbiobank.ukbio class to path (for autogeneration of API docstring . . )
 sys.path.append(os.path.abspath('../'))
@@ -32,8 +30,8 @@ from sphinx.locale import _
 
 project = u'UKBiobank-tools'
 slug = re.sub(r'\W+', '-', project.lower())
-version = '0.1.0'
-release = '0.1.0'
+version = '0.1.6'
+release = '0.1.6'
 author = u'JNecus'
 copyright = author
 language = 'en'
