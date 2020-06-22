@@ -16,7 +16,7 @@ import csv
         
 
 def getFieldsInstancesArrays(ukb_csv=None, data_dict=None):
-    """Docstring
+    """
     
     Parameters
     ----------

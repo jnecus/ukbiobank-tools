@@ -10,9 +10,8 @@ from .utils import getFieldsInstancesArrays
 import pandas as pd
 import os
 
-class ukbio:
-    
-    """Docstring for ukbio class.       
+class ukbio:    
+    """
         
     Parameters
     ----------
