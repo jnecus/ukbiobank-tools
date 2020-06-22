@@ -166,6 +166,8 @@ UKBiobank-tools can be used to filter ukbiobank data based upon illness diagnosi
 GUI
 ---
 
+1. Load ukbiobank object (see :any:`above <load_ukbiobank_object_label>`)
+
 2. Select 'select illnesses' option and select desired illnesses.
 
 
