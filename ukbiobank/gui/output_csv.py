@@ -12,7 +12,7 @@ from wx.lib.agw import pybusyinfo
 
 class OutputCsvFrame(wx.Frame, ukbiobank.ukbio):
     def __init__(self, parent, ukb):
-        super().__init__(parent=None, title='Output CSV', size=wx.DefaultSize)
+        super().__init__(parent=parent, title='Output CSV', size=wx.DefaultSize)
 
 
 
@@ -30,7 +30,7 @@ class OutputCsvFrame(wx.Frame, ukbiobank.ukbio):
             s = ukb.SELECTIONS 
             
             if s is None:
-                print("No selections were made")
+                wx.MessageDialog(self, message="No selections were made.").ShowModal()
                 return
             
             else:
