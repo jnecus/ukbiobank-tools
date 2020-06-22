@@ -28,7 +28,7 @@ setup(
     url='https://github.com/jnecus/ukbiobank-tools',
     license=license,
     packages=find_packages(exclude=('tests', 'docs')),
-	package_data = {'ukbiobank/data_coding': ['*']}
+	package_data = {'ukbiobank/data_coding': ['*']},
 	install_requires=list_requirements()
 )
 
