@@ -25,25 +25,6 @@ API documentation
     :members:
 
 
-
-:mod:`ukbiobank.filtering2`
-===========================
-
-.. automodule:: ukbiobank.filtering
-    :members:
-
-
-
-
-:mod:`ukbiobank2`
-=================
-
-.. automodule:: ukbiobank
-    :members:
-
-
-
-
 Generated Index
 ===============
 
