@@ -25,6 +25,16 @@ API documentation
     :members:
 
 
+temp
+
+.. automodule:: ukbiobank
+    :members:
+
+
+.. automodule:: ukbiobank.filtering
+    :members:
+
+
 Generated Index
 ===============
 
