@@ -22,8 +22,8 @@ python:
    version: 3.7
    install:
       - method: pip
-        path: .
-        extra_requirements:
-           - docs
+        path: docs
       - method: setuptools
-        path: package
+        path: .
+
+
