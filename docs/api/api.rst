@@ -29,7 +29,7 @@ API documentation
 :mod:`ukbiobank.utils2`
 =======================
 
-.. automodule:: ukbiobank.ukbio_utils
+.. automodule:: ukbiobank.utils
     :members:
 
 

@@ -5,8 +5,10 @@ Created on Fri Mar 27 12:38:10 2020
 @author: jnecus
 """
 
+#temp_test
+print('testing')
 
-from ukbiobank.utils import getFieldsInstancesArrays
+from .utils import getFieldsInstancesArrays
 import pandas as pd
 import os
 
