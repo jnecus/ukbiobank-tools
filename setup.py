@@ -21,7 +21,7 @@ def list_requirements():
 	
 setup(
     name='ukbiobank-tools',
-    version='0.1.94',
+    version='0.1.95',
     description='Useful tools for working with UK Biobank meta-data',
     author='Joe Necus',
     author_email='joenecus@gmail.com',
@@ -29,7 +29,7 @@ setup(
     license=license,	
 	packages=find_packages(include=["ukbiobank"]),
     package_data={"": ["data_coding/*"]},
-	install_requires=["pandas", "wxpython"],
+	install_requires=["pandas"],
     extras_require = {"docs": [ "sphinx",
                                 "sphinxcontrib-httpdomain",
                                 "sphinx-rtd-theme"]})
