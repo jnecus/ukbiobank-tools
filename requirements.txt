@@ -1,4 +1,2 @@
-nose
-sphinx
 pandas
-wxpython
+wxpython==4.0.0
