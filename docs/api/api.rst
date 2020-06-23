@@ -30,9 +30,6 @@ t1
     :members:
 
 
-.. automodule:: ukbio_filtering
-    :members:
-
 
 Generated Index
 ===============
