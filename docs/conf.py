@@ -25,7 +25,7 @@ if is_development_build():
 sys.path.append(os.path.abspath('../'))
 
 #Temp checking path
-print*(' temp_checking', os.path.abspath('..'))
+print(' temp_checking', os.path.abspath('..'))
 
 
 import sphinx_rtd_theme
