@@ -29,7 +29,7 @@ setup(
     license=license,	
 	packages=find_packages(include=["ukbiobank"]),
     package_data={"": ["data_coding/*"]},
-	install_requires=["pandas", "wxpython"],
+	install_requires=["pandas"],
     extras_require = {"docs": [ "sphinx",
                                 "sphinxcontrib-httpdomain",
                                 "sphinx-rtd-theme"]})
