@@ -32,8 +32,8 @@ from sphinx.locale import _
 
 project = u'UKBiobank-tools'
 slug = re.sub(r'\W+', '-', project.lower())
-version = '0.1.6'
-release = '0.1.6'
+version = '0.1.9'
+release = '0.1.9'
 author = u'JNecus'
 copyright = author
 language = 'en'
