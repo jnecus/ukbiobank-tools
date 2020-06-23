@@ -25,6 +25,15 @@ API documentation
     :members:
 
 
+
+:mod:`ukbiobank.utils2`
+=======================
+
+.. automodule:: ukbiobank.utils
+    :members:
+
+
+
 Generated Index
 ===============
 
