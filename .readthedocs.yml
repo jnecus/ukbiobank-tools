@@ -22,7 +22,7 @@ python:
    version: 3.7
    install:
       - method: pip
-        path: docs
+        path: docs/requirements.txt
       - method: setuptools
         path: .
 
