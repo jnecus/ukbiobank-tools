@@ -1,1 +1,1 @@
-from .ukbio_utils import *
+from ukbio_utils import *

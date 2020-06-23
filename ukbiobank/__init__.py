@@ -1,1 +1,1 @@
-from .ukbio import ukbio
+import ukbio
