@@ -22,5 +22,5 @@ python:
         extra_requirements:
            - docs
       - method: setuptools
-        path: ukbiobank-tools
+        path: .
 
