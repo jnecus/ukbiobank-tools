@@ -27,6 +27,11 @@ if is_development_build():
 # Append location of ukbiobank.ukbio class to path (for autogeneration of API docstring . . )
 sys.path.append(os.path.abspath('../'))
 
+# Append location of ukbiobank.ukbio class to path (for autogeneration of API docstring . . )
+sys.path.append(os.path.abspath('../../'))
+sys.path.append(os.path.abspath('../ukbiobank/'))
+
+
 import sphinx_rtd_theme
 from sphinx.locale import _
 
