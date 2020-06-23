@@ -14437,8 +14437,8 @@ U068	U06.8 Emergency use of U06.8	14435	14426	Y
 U069	U06.9 Emergency use of U06.9	14436	14426	Y
 U07	U07 Emergency use of U07	14437	284	N
 U070	U07.0 Emergency use of U07.0	14438	14437	Y
-U071	U07.1 Emergency use of U07.1	14439	14437	Y
-U072	U07.2 Emergency use of U07.2	14440	14437	Y
+U071	U07.1 COVID-19 virus identified	14439	14437	Y
+U072	U07.2 COVID-19 virus not identified	14440	14437	Y
 U073	U07.3 Emergency use of U07.3	14441	14437	Y
 U074	U07.4 Emergency use of U07.4	14442	14437	Y
 U075	U07.5 Emergency use of U07.5	14443	14437	Y
