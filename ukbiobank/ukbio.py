@@ -6,7 +6,7 @@ Created on Fri Mar 27 12:38:10 2020
 """
 
 
-from .utils import getFieldsInstancesArrays
+from ukbiobank.utils import getFieldsInstancesArrays
 import pandas as pd
 import os
 
