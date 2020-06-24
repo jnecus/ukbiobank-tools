@@ -12,12 +12,15 @@ import re
 import wx
 import ukbiobank
 import ukbiobank.filtering 
-from .select_variables import SelectVariablesFrame
-from .select_illness import SelectIllnessFrame
-from .output_csv import OutputCsvFrame
+from ukbiobank.gui.select_variables import SelectVariablesFrame
+from ukbiobank.gui.select_illness import SelectIllnessFrame
+from ukbiobank.gui.output_csv import OutputCsvFrame
+
+class M_AM_B(wx.Frame, ukbiobank.ukbio.ukbio): pass
 
 #MenuFrame (frame containing all options)
-class MenuFrame(wx.Frame, ukbiobank.ukbio):
+class MenuFrame(wx.Frame, ukbiobank.ukbio.ukbio):
+    __metaclass__ = M_AM_B
     
     def __init__(self, frame, ukb):
         super().__init__(parent=None,title='UKBiobank-tools menu', size=wx.DefaultSize)

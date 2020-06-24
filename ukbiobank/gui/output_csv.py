@@ -10,7 +10,11 @@ import wx
 import ukbiobank 
 from wx.lib.agw import pybusyinfo
 
-class OutputCsvFrame(wx.Frame, ukbiobank.ukbio):
+
+class M_AM_B(wx.Frame, ukbiobank.ukbio.ukbio): pass
+
+class OutputCsvFrame(wx.Frame, ukbiobank.ukbio.ukbio):
+    __metaclass__ = M_AM_B
     def __init__(self, parent, ukb):
         super().__init__(parent=parent, title='Output CSV', size=wx.DefaultSize)
 
@@ -39,11 +43,11 @@ class OutputCsvFrame(wx.Frame, ukbiobank.ukbio):
                 
                 # Adding fields to dataframe
                 if 'include_variables' in s and len(s['include_variables']) > 0:
-                    df = ukbiobank.utils.addFields(ukbio=ukb, fields=s['include_variables'])
+                    df = ukbiobank.utils.utils.addFields(ukbio=ukb, fields=s['include_variables'])
                 
                 # Filtering dataframe according to 'include_illness' selections
                 if 'include_illnesses' in s and len(s['include_illnesses_coded']) > 0:                
-                    df = ukbiobank.filtering.filterByField(ukbio=ukb, df=df, fields_to_include=s['include_illnesses_coded'])
+                    df = ukbiobank.filtering.filtering.filterByField(ukbio=ukb, df=df, fields_to_include=s['include_illnesses_coded'])
                 
                 
                 try:

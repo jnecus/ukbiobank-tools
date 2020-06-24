@@ -9,9 +9,9 @@ UKBiobank data loading utilities
 import wx
 import ukbiobank 
 from wx.lib.agw import pybusyinfo
-from ukbiobank.gui import MenuFrame
+from ukbiobank.gui.menu_frame import MenuFrame
 
-#Load path to ukbiobank csv file, initialise ukbiobank.ukbio() object..
+#Load path to ukbiobank csv file, initialise ukbiobank.ukbio.ukbio() object..
 class LoadFrame(wx.Frame):    
     def __init__(self):
         super().__init__(parent=None, title='UKBiobank-tools')
@@ -40,7 +40,7 @@ class LoadFrame(wx.Frame):
             #Loading menu...
             self.Close()
             busy =  pybusyinfo.PyBusyInfo(message='Loading csv, please wait...')
-            ukb=ukbiobank.ukbio(ukb_csv=value)
+            ukb=ukbiobank.ukbio.ukbio(ukb_csv=value)
             busy.Show(show=False)
             MenuFrame(self, ukb)
        

@@ -5,7 +5,7 @@ Created on Fri Mar 27 12:38:10 2020
 @author: jnecus
 """
 
-from .utils import ukbio_utils
+from .utils import utils
 import pandas as pd
 import os
 
@@ -53,6 +53,6 @@ class ukbio:
 
 
         #Variable/instance codings
-        self.field_instance_array_df=ukbio_utils.getFieldsInstancesArrays(ukb_csv=self.csv_path, data_dict=self.data_dict)        
+        self.field_instance_array_df=utils.getFieldsInstancesArrays(ukb_csv=self.csv_path, data_dict=self.data_dict)        
         
         

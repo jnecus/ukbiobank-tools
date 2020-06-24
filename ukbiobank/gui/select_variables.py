@@ -3,7 +3,11 @@
 import wx
 import ukbiobank 
 
-class SelectVariablesFrame(wx.Frame, ukbiobank.ukbio):
+
+class M_AM_B(wx.Frame, ukbiobank.ukbio.ukbio): pass
+
+class SelectVariablesFrame(wx.Frame, ukbiobank.ukbio.ukbio):
+    __metaclass__ = M_AM_B
         
     def __init__(self, parent, ukb):
         super().__init__(parent=parent, title='UKBiobank-tools checkbox')
@@ -13,7 +17,7 @@ class SelectVariablesFrame(wx.Frame, ukbiobank.ukbio):
         
         
         #Variables checkbox
-        self.checkbox = wx.CheckListBox(panel,choices=ukbiobank.utils.getFieldnames(ukb))
+        self.checkbox = wx.CheckListBox(panel,choices=ukbiobank.utils.utils.getFieldnames(ukb))
         
         #Description
         desc=wx.TextCtrl(panel,value='Select desired variables',style=wx.TE_READONLY)

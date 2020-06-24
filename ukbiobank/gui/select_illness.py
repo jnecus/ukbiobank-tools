@@ -9,8 +9,10 @@ Created on Fri Jun 12 17:45:15 2020
 import wx
 import ukbiobank 
 
+class M_AM_B(wx.Frame, ukbiobank.ukbio.ukbio): pass
 
-class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio):
+class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio.ukbio):
+    __metaclass__ = M_AM_B
     def __init__(self, parent, ukb):
         super().__init__(parent=parent, title='Select Illness', size=wx.DefaultSize)
 
@@ -86,7 +88,7 @@ class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio):
         
 
 # Define the tab content as classes (in this case each tab will have the same structure so base 'Tab' class will suffice)
-class Tab(wx.Panel, ukbiobank.ukbio):
+class Tab(wx.Panel, ukbiobank.ukbio.ukbio):
     def __init__(self, parent, ukb, diagnosisType):
         wx.Panel.__init__(self, parent)
         #wx.StaticText(self, -1, "This is the first tab", (20,20))
