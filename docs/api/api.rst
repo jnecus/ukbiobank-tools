@@ -14,14 +14,14 @@ API documentation
 :mod:`ukbiobank.utils`
 ======================
 
-.. automodule:: ukbiobank.utils
+.. automodule:: ukbiobank.utils.utils
     :members:
 
 
 :mod:`ukbiobank.filtering`
 ==========================
 
-.. automodule:: ukbiobank.filtering
+.. automodule:: ukbiobank.filtering.filtering
     :members:
 
 
