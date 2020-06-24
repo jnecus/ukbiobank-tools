@@ -8,7 +8,7 @@ UKBiobank data filtering utilities
 """
 import pandas as pd
 import re
-from ukbiobank.utils import fieldNamesToIds, addFields
+from ..utils.ukbio_utils import fieldNamesToIds, addFields
 
 def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
     """

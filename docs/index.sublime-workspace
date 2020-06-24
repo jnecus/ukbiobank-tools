@@ -12,14 +12,6 @@
 	"buffers":
 	[
 		{
-			"file": "installing.rst",
-			"settings":
-			{
-				"buffer_size": 719,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "/C/Users/Joe/Google Drive/Post Doc Dementia/Python_Packages/ukbiobank-tools/.readthedocs.yml",
 			"settings":
 			{
@@ -34,6 +26,31 @@
 			{
 				"buffer_size": 861,
 				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "api/api.rst",
+			"settings":
+			{
+				"buffer_size": 513,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Joe/Google Drive/Post Doc Dementia/Python_Packages/ukbiobank-tools/ukbiobank/ukbio.py",
+			"settings":
+			{
+				"buffer_size": 1601,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Joe/Google Drive/Post Doc Dementia/Python_Packages/ukbiobank-tools/ukbiobank/utils/__init__.py",
+			"settings":
+			{
+				"buffer_size": 26,
 				"line_ending": "Windows"
 			}
 		}
@@ -176,39 +193,11 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "installing.rst",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 719,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/RestructuredText/reStructuredText.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "/C/Users/Joe/Google Drive/Post Doc Dementia/Python_Packages/ukbiobank-tools/.readthedocs.yml",
 					"semi_transient": false,
 					"settings":
@@ -234,11 +223,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "/C/Users/Joe/Google Drive/Post Doc Dementia/Python_Packages/ukbiobank-tools/setup.py",
 					"semi_transient": false,
 					"settings":
@@ -259,6 +248,92 @@
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "api/api.rst",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 513,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								400,
+								400
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/RestructuredText/reStructuredText.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 108.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/Users/Joe/Google Drive/Post Doc Dementia/Python_Packages/ukbiobank-tools/ukbiobank/ukbio.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1601,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/Users/Joe/Google Drive/Post Doc Dementia/Python_Packages/ukbiobank-tools/ukbiobank/utils/__init__.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 26,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,

@@ -1,1 +1,1 @@
-from .ukbio_filtering import *
+from . import ukbio_filtering as filtering

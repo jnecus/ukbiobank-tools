@@ -1,1 +1,1 @@
-from .ukbio_utils import *
+from . import ukbio_utils as utils
