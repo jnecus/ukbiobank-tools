@@ -8,6 +8,7 @@ Created on Fri Jun 12 17:45:15 2020
 
 import wx
 import ukbiobank 
+import ukbiobank.filtering.filtering
 from wx.lib.agw import pybusyinfo
 
 
