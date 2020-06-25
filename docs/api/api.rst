@@ -25,7 +25,15 @@ API documentation
     :members:
 
 
-temp
+
+temp1
+
+.. automodule:: ukbiobank.utils
+    :members:
+
+
+
+temp2
 
 .. automodule:: ukbiobank.filtering
     :members:
