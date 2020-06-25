@@ -139,6 +139,10 @@ def filterByField(ukbio=None, df=None, fields_to_include=None, instances=[0,1,2,
             
                 
                 #Is there a matching value in any column given the list of values
+                
+                if not isinstance(value, list):
+                    value = [value]
+                
                 temp_df=df[field_instance_arrays].isin(value)
                 
                 #If any column is true, then keep that row (i.e. that 'eid' row)
