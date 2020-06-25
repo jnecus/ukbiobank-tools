@@ -20,17 +20,10 @@ def is_development_build():
 if is_development_build():
     sys.path.insert(0, os.path.abspath('..'))
 
-#temp_checking
-#import ukbiobank.utils
-#print('temp_checking', ukbiobank.utils)
-
 # Append location of ukbiobank.ukbio class to path (for autogeneration of API docstring . . )
 sys.path.append(os.path.abspath('../'))
 
-# Append location of ukbiobank.ukbio class to path (for autogeneration of API docstring . . )
-sys.path.append(os.path.abspath('../../'))
-sys.path.append(os.path.abspath('../ukbiobank/'))
-
+import ukbiobank.filtering
 
 import sphinx_rtd_theme
 from sphinx.locale import _
