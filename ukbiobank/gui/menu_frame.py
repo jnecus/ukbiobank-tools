@@ -6,9 +6,6 @@ Created on Wed Mar 25 13:33:29 2020
 
 UKBiobank data loading utilities
 """
-import pandas as pd
-import re
-
 import wx
 import ukbiobank
 import ukbiobank.filtering 
