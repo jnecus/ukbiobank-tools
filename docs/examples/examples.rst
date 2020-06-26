@@ -200,7 +200,7 @@ Filtering based upon specific illnesses can be achieved using the :py:func:`filt
 
  # Selecting self-reported illness as desired field  
  self_reported_illness_field = 20002
- illness = 1074 # 1074 corresponds to 'dementia/alzheimers/cognitive impairment'
+ illness = 1263 # 1263 corresponds to 'dementia/alzheimers/cognitive impairment'
 
  # Organise field and illness into dictionary
  fields_to_include = {self_reported_illness_field: illness}
