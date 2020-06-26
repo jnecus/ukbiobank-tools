@@ -100,6 +100,7 @@ class Tab(wx.Panel, ukbiobank.ukbio.ukbio):
             #Getting list of illnesses
             df = ukb.nonCancerIllnessCoding
             illness_list = (df.loc[ (df['coding'] !=-1)  & (df['coding'] !=99999),'meaning']).tolist()
+            illness_list.sort()
         
         elif diagnosisType=='ICD9':
             illness_list = ukb.icd9Coding.meaning.tolist()
