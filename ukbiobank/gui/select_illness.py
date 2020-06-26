@@ -52,11 +52,9 @@ class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio.ukbio):
     #set selections
     def submit(self, event, parent, ukb):
         
-        
         self_reported = list(self.tab1.getSelections())
         icd9 = list(self.tab2.getSelections())
         icd10 = list(self.tab3.getSelections())
-
     
         selections = {}
         
@@ -69,8 +67,6 @@ class SelectIllnessFrame(wx.Frame, ukbiobank.ukbio.ukbio):
                                            'Diagnoses - main ICD9': icd9,
                                            'Diagnoses - ICD10': icd10}
         
-
-
                                        
         selections['include_illnesses_coded'] = {20002: ukb.nonCancerIllnessCoding['coding'][ukb.nonCancerIllnessCoding['meaning'].isin(self_reported)].tolist(),
                                            41203: ukb.icd9Coding['coding'][ukb.icd9Coding['meaning'].isin(icd9)].tolist(),
