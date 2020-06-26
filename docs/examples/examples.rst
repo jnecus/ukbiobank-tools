@@ -150,7 +150,7 @@ Fields can also be added to an existing dataframe by including the **df** input 
 
 
 
-See the :py:func:`addFields <ukbiobank.utils.ukbio_utils.addFields>` function for further functionality.
+See the :py:func:`addFields <ukbiobank.utils.utils.addFields>` function for further functionality.
 
 
 
@@ -190,7 +190,7 @@ GUI
 CLI
 ---
 
-Filtering based upon specific illnesses can be achieved using the :py:func:`filterByField <ukbiobank.filtering.ukbio_filtering.filterByField>` function:
+Filtering based upon specific illnesses can be achieved using the :py:func:`filterByField <ukbiobank.filtering.filtering.filterByField>` function:
 
 
 .. code-block:: python
@@ -200,7 +200,7 @@ Filtering based upon specific illnesses can be achieved using the :py:func:`filt
 
  # Selecting self-reported illness as desired field  
  self_reported_illness_field = 20002
- illness = 'dementia'
+ illness = 1074 # 1074 corresponds to 'dementia/alzheimers/cognitive impairment'
 
  # Organise field and illness into dictionary
  fields_to_include = {self_reported_illness_field: illness}

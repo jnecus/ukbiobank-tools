@@ -27,7 +27,7 @@ def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
 
     Returns
     -------
-    Pandas dataframe with datafields filtered for selected instances/arrays.
+    Dataframe with datafields filtered for selected instances/arrays : Pandas dataframe
 
     """
 
