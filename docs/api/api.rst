@@ -26,14 +26,13 @@ API documentation
 
 
 
-.. temp1
+temp1
 
-.. automodule:: ukbiobank.utils
-    :members:
+.. currentmodule:: ukbiobank.filtering
+    
 
 
-
-.. temp2
+temp2
 
 .. automodule:: ukbiobank.filtering
     :members:
