@@ -26,18 +26,6 @@ API documentation
 
 
 
-temp1
-
-.. currentmodule:: ukbiobank.filtering
-    
-
-
-temp2
-
-.. automodule:: ukbiobank.filtering
-    :members:
-
-
 Generated Index
 ===============
 
