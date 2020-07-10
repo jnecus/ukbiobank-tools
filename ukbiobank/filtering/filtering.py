@@ -8,7 +8,11 @@ UKBiobank data filtering utilities
 """
 import pandas as pd
 import re
-from ..utils.utils import fieldNamesToIds, addFields
+import ukbiobank
+import ukbiobank.utils
+
+#from ukbiobank.utils import fieldNamesToIds, addFields
+
 
 def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
     """
@@ -30,10 +34,14 @@ def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
     Dataframe with datafields filtered for selected instances/arrays : Pandas dataframe
 
     """
-
+    
+    # Check instances is list, if not convert to list
+    if not isinstance(instances, list):
+        instances = [instances]
+    
     #if all columns contain alphanumeric characters then convert to field ID 
     if df.columns.str.contains('[a-z]').all():
-        df=fieldNamesToIds(ukbio,df)
+        df=ukbiobank.utils.fieldNamesToIds(ukbio,df)
     
     field_instance_array_df_temp=ukbio.field_instance_array_df.copy()
     
@@ -90,11 +98,11 @@ def filterByField(ukbio=None, df=None, fields_to_include=None, instances=[0,1,2,
     # Account for df = None, or if fields are not found in df, then add them
     if df is None:
         # Add all fields_to include
-        df = addFields(ukbio=ukbio, fields=list(fields_to_include.keys()))
+        df = ukbiobank.utils.addFields(ukbio=ukbio, fields=list(fields_to_include.keys()))
     else:
         
         # Convert df headings to fieldid-instance.array
-        df = fieldNamesToIds(ukbio=ukbio, df=df)
+        df = ukbiobank.utils.fieldNamesToIds(ukbio=ukbio, df=df)
         
         # Checking for missing fields
         df_fields = []
@@ -109,7 +117,7 @@ def filterByField(ukbio=None, df=None, fields_to_include=None, instances=[0,1,2,
                 fields_to_add.append(f)
             
         if len(fields_to_add)>0:
-            df = addFields(ukbio=ukbio, df=df, fields=fields_to_add)
+            df = ukbiobank.utils.addFields(ukbio=ukbio, df=df, fields=fields_to_add)
  
     
  

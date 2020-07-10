@@ -10,7 +10,8 @@ import pandas as pd
 import re
 import numpy as np
 import csv
-
+import ukbiobank
+import ukbiobank.filtering
 
         
         
@@ -184,7 +185,7 @@ def getFieldIdsFromNames(ukbio, field_names=None):
 
     return field_ids
 
-def loadCsv(ukbio=None, fields=None, n_rows=None):
+def loadCsv(ukbio=None, fields=None, n_rows=None, instance=None):
     """
     
     Parameters
@@ -193,7 +194,9 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
     
     fields : List of strings, Mandatory
         Accepts UKB field category, ID or text string (or mixed), e.g. 21, '21-0.0' or 'Sex'.
-
+    
+    instance: Integer (either 0,1,2,3), optional.
+        Performs filtering of columns by instance
 
     Returns
     -------
@@ -264,7 +267,8 @@ def loadCsv(ukbio=None, fields=None, n_rows=None):
     else:
         df=pd.read_csv(ukbio.csv_path, usecols=new_fields)
     
-
+    if instance is not None:
+        df = ukbiobank.filtering.filterInstancesArrays(ukbio=ukbio, df=df, instances=instance)
 
     return df
 
