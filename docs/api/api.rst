@@ -26,6 +26,14 @@ API documentation
 
 
 
+:mod:`ukbiobank.filtering.illness`
+==================================
+
+.. automodule:: ukbiobank.filtering.illness
+    :members:
+
+
+
 Generated Index
 ===============
 

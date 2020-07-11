@@ -1,4 +1,3 @@
 from .ukbio import ukbio
-
-#from .utils.utils import *
-#from . import filtering
+from . import utils 
+from . import filtering

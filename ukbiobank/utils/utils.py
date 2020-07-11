@@ -454,7 +454,7 @@ def illnessCodesToText(ukbio=None, df=None):
     return df_out
 
 
-def addFields(ukbio=None, df=None, fields=None):
+def addFields(ukbio=None, df=None, fields=None, instances=None):
     """
     
     Parameters
@@ -468,6 +468,9 @@ def addFields(ukbio=None, df=None, fields=None):
     fields : List, Mandatory
         Accepts UKB field ID or text string (or mixed), e.g. '31-0.0' or 'Sex'.
         
+    instances: integer or list of integers, Optional
+        If present, fields will be filtered for chosens instance(s) before being added.
+        
     Example usage::
         
         df = ukbiobank.utils.addFields(ukbio = ukb, df = df, fields = ['Sex'])
@@ -480,10 +483,13 @@ def addFields(ukbio=None, df=None, fields=None):
 
     """
     
-    # Convert to list
+    # Convert fields to list
     if not isinstance(fields,list):
         fields = [fields]
     
+    # Convert instances to list
+    if not isinstance(instances,list):
+        instances = [instances]
     
     # If no df passed, then initiliase empty df
     if df is None:
@@ -504,7 +510,10 @@ def addFields(ukbio=None, df=None, fields=None):
     
     # Get extra fields
     new_df = loadCsv(ukbio, fields=fields)
-        
+    
+    # Filter for instances 
+    if instances is not None:
+        new_df = ukbiobank.filtering.filterInstancesArrays(ukbio, df=new_df, instances=instances)
     
     # Merge dataframes
     if  in_df is True:

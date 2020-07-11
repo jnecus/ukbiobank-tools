@@ -9,7 +9,7 @@ UKBiobank data filtering utilities
 import pandas as pd
 import re
 import ukbiobank
-import ukbiobank.utils
+#import ukbiobank.utils
 
 #from ukbiobank.utils import fieldNamesToIds, addFields
 
@@ -82,7 +82,7 @@ def filterByField(ukbio=None, df=None, fields_to_include=None, instances=[0,1,2,
     *FIELDS IN FIELDS_TO_INCLUDE MUST BE IN FIELD_ID FORM* e.g. '20002' (not 'Self-reported Illness') *
     *VALUES IN FIELDS_TO_INCLUDE MUST BE IN CODED FORM* e.g. '1074', (not 'angina') *
    
-    instances : list of integers
+    instances : list of integers, Default is [0,1,2,3] (include all instances)
     
     arrays : list of integers
         
