@@ -22,7 +22,7 @@ def healthy_unhealthy_split(ukbio=None, df=None, instances=[0,1,2,3], return_fil
     Stroke history (field #4056), 
     Not having good or excellent self-reported health (field #2178).    
     
-   *Note: According to these criteria, around ~15% of the data are 'healthy', with 75% deemed 'unhealthy'*
+   *Note: According to these criteria, around ~20% of the data are 'healthy', with 80% deemed 'unhealthy'*
 
     Parameters
     ----------
@@ -99,9 +99,22 @@ def healthy_unhealthy_split(ukbio=None, df=None, instances=[0,1,2,3], return_fil
     # Splitting original df by 'healthy' vs. 'unhealthy' eids 
     unhealthy_eids = list(set(unhealthy_eids)) #unique unhealthy eids
     
-    
+   
     df_unhealthy = in_df.loc[in_df['eid'].isin(unhealthy_eids)]
     df_healthy = in_df.loc[~in_df['eid'].isin(unhealthy_eids)]
 
+    # Including criteria fields if requested
+    if return_filter_fields == True:
+        df_unhealthy = pd.merge(df_unhealthy,df_excl_criteria, on='eid')
+        df_healthy = pd.merge(df_healthy,df_excl_criteria, on='eid')
+
 
     return df_healthy, df_unhealthy
+
+
+
+
+
+
+
+

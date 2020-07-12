@@ -35,8 +35,8 @@ def filterInstancesArrays(ukbio=None, df=None, instances=None, arrays=None):
 
     """
     
-    # Check instances is list, if not convert to list
-    if not isinstance(instances, list):
+    # If instances is not None and is not list, convert to list
+    if instances is not None and not isinstance(instances, list):
         instances = [instances]
     
     #if all columns contain alphanumeric characters then convert to field ID 

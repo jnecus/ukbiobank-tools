@@ -488,7 +488,7 @@ def addFields(ukbio=None, df=None, fields=None, instances=None):
         fields = [fields]
     
     # Convert instances to list
-    if not isinstance(instances,list):
+    if instances is not None and not isinstance(instances,list):
         instances = [instances]
     
     # If no df passed, then initiliase empty df
