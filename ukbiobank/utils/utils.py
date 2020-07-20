@@ -373,24 +373,26 @@ def fieldNamesToIds(ukbio=None, df=None):
     
     cols=df.columns.tolist()    
     fieldID_fieldName_df=ukbio.field_instance_array_df.copy()
-    
+    all_field_names = fieldID_fieldName_df.field_name_instance_array.unique().tolist()
     
     new_fields = []
-    #Check if field is a series of integers in '(field)-(instance).(array)' format, if so 
+    #Check if field is a series of integers in '(field)-(instance).(array)' format, if it is not (i.e. it is a name..)
     for c in cols:
         if re.match("[0-9]*-[0-9]*\.[0-9]*$", c) is None and c!='eid':
            
-            
-            fieldNameParts=c.split('-')[:-1] # get all parts of string up until the final '-' (i.e. the name)
-            
-            fieldName='-'.join(fieldNameParts)#
-            instanceArray=c.split('-')[-1]
-            
-            fieldID=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==fieldName]['field_id'].iloc[0]
-            
-            converted=re.sub("(.*)-[0-9]*\.[0-9]*$",str(fieldID)+'-'+instanceArray,c)
-            
-            new_fields.append(converted)
+            #if field is not found then return in current form
+            if c not in all_field_names:
+                new_fields.append(c)
+            else:            
+                fieldNameParts=c.split('-')[:-1] # get all parts of string up until the final '-' (i.e. the name)
+                fieldName='-'.join(fieldNameParts)#
+                instanceArray=c.split('-')[-1]
+                
+                fieldID=fieldID_fieldName_df[fieldID_fieldName_df['field_name']==fieldName]['field_id'].iloc[0]
+                
+                converted=re.sub("(.*)-[0-9]*\.[0-9]*$",str(fieldID)+'-'+instanceArray,c)
+                
+                new_fields.append(converted)
         else:
             new_fields.append(c)
    
@@ -517,6 +519,10 @@ def addFields(ukbio=None, df=None, fields=None, instances=None):
     
     # Merge dataframes
     if  in_df is True:
+        # Ensure that both df's containing column headers as name format before merging (to avoid duplicate columns being kept)
+        df = fieldIdsToNames(ukbio=ukbio, df=df)
+        new_df = fieldIdsToNames(ukbio=ukbio, df=new_df)
+        
         # Ignoring duplicate columns
         cols_to_use = new_df.columns.difference(df.columns)
         cols_to_use = cols_to_use.tolist()
@@ -524,6 +530,9 @@ def addFields(ukbio=None, df=None, fields=None, instances=None):
         
         # Merging
         out_df=df.merge(new_df[cols_to_use], on='eid', how='inner')
+        
+        #Converting back from names to codes (codes are default)
+        out_df = fieldNamesToIds(ukbio=ukbio, df=out_df)
     else:
         out_df = new_df.copy()
         
@@ -532,7 +541,7 @@ def addFields(ukbio=None, df=None, fields=None, instances=None):
 
 
 
-def calculateHealthySleepScore(ukbio=None, df=None):
+def calculateHealthySleepScore(ukbio=None, df=None, instances=[2,3]):
     """
     Generates a composite healthy sleep score (0-5) accoring the methods used: 
         https://academic.oup.com/eurheartj/article/41/11/1182/5678714#200787415
@@ -541,6 +550,8 @@ def calculateHealthySleepScore(ukbio=None, df=None):
     Parameters
     ----------
     ukbio : ukbio object.  Mandatory.
+    
+    instances. List of int. Default = [2,3]
     
     df : pandas df loaded using ukbiobank-tools. Mandatory.
 
@@ -555,7 +566,7 @@ def calculateHealthySleepScore(ukbio=None, df=None):
 
     #sleep_vars=['Morning/evening person (chronotype)-{0}.0', 'Sleep duration-{0}.0',  'Sleeplessness / insomnia-{0}.0', 'Snoring-{0}.0' ,  'Daytime dozing / sleeping (narcolepsy)-{0}.0']
     
-    for instance in ['2', '3']:
+    for instance in instances:
         
         
         hss='healthy_sleep_score-{0}.0'.format(instance) #(hss : healthy sleep score)
