@@ -42,17 +42,19 @@ class ukbio:
         file_path = os.path.dirname(__file__)       
         self.csv_path=ukb_csv
         
+
+        
         #Paths may fail between unix / windows due to hard-coded backslash below
-        self.data_dict=pd.read_csv(file_path+'\data_coding\Data_Dictionary_Showcase.csv')
+        self.data_dict=pd.read_csv(os.path.join(file_path,'data_coding','Data_Dictionary_Showcase.csv'))
                 
         #Illness/medication codings
         #TODO continue insert coding dictionaries.. (for medications etc..)
-        self.nonCancerIllnessCoding=pd.read_table(file_path+'\data_coding\coding6.tsv')
-        self.icd9Coding=pd.read_table(file_path+'\data_coding\coding87.tsv')
-        self.icd10Coding=pd.read_table(file_path+'\data_coding\coding19.tsv')
+        self.nonCancerIllnessCoding=pd.read_table(os.path.join(file_path,'data_coding','coding6.tsv'))
+        self.icd9Coding=pd.read_table(os.path.join(file_path,'data_coding','coding87.tsv'))
+        self.icd10Coding=pd.read_table(os.path.join(file_path,'data_coding','coding19.tsv'))
 
 
         #Variable/instance codings
-        self.field_instance_array_df=ukbiobank.utils.getFieldsInstancesArrays(ukb_csv=self.csv_path, data_dict=self.data_dict)        
+        self.field_instance_array_df=ukbiobank.utils.getFieldsInstancesArrays(ukb_csv=self.csv_path, data_dict=self.data_dict)     
         
         
