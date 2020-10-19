@@ -12,6 +12,7 @@ UKBiobank-tools contains both a graphical user interface (GUI) and command line 
 
 .. Note:: Certain functionality is currently only available via the command line interface. Such examples are planned to be released as part of the GUI in future versions.
 
+.. Note:: In order to use the GUI via MAC OS, the command 'pythonw' should be used to rather than 'python' (see: https://stackoverflow.com/questions/48531006/wxpython-this-program-needs-access-to-the-screen)
 
 
 .. contents:: Table of Contents
@@ -56,7 +57,7 @@ CLI
   import ukbiobank
 
   # Path to ukb csv file
-  csv_path = 'path/to/ukbiobank_csv_file.csv' # (this can also accept zipped csv files, e.g. path/to/ukbiobank_csv_file.zip 
+  csv_path = 'path/to/ukbiobank_csv_file.csv' # (this can also accept zipped csv files, e.g. path/to/ukbiobank_csv_file.zip
 
   # Load 'ukbio' object
   ukb = ukbiobank.ukbio(ukb_csv=csv_path)
@@ -109,7 +110,7 @@ CLI
   # Load 'ukbio' object
   ukb = ukbiobank.ukbio(ukb_csv=csv_path)
 
-  # Select desired fields 
+  # Select desired fields
   fields = ['Sex', 'Year of birth (Field ID: 34)', 'Number of treatments/medications taken']
 
   # Import addFields function
@@ -198,13 +199,13 @@ Filtering based upon specific illnesses can be achieved using the :py:func:`filt
  # Load 'ukbio' object
  ukb = ukbiobank.ukbio(ukb_csv=csv_path)
 
- # Selecting self-reported illness as desired field  
+ # Selecting self-reported illness as desired field
  self_reported_illness_field = 20002
  illness = 1263 # 1263 corresponds to 'dementia/alzheimers/cognitive impairment'
 
  # Organise field and illness into dictionary
  fields_to_include = {self_reported_illness_field: illness}
- 
+
  # Import filterByField
  from ukbiobank.filtering.filtering import filterByField
 
