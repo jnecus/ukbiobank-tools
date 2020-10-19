@@ -59,7 +59,7 @@ CLI
   csv_path = 'path/to/ukbiobank_csv_file.csv' # (this can also accept zipped csv files, e.g. path/to/ukbiobank_csv_file.zip 
 
   # Load 'ukbio' object
-  ukb = ukbiobank.ukbio.ukbio(ukb_csv=csv_path)
+  ukb = ukbiobank.ukbio(ukb_csv=csv_path)
 
 
 
@@ -107,7 +107,7 @@ CLI
 .. code-block:: python
 
   # Load 'ukbio' object
-  ukb = ukbiobank.ukbio.ukbio(ukb_csv=csv_path)
+  ukb = ukbiobank.ukbio(ukb_csv=csv_path)
 
   # Select desired fields 
   fields = ['Sex', 'Year of birth (Field ID: 34)', 'Number of treatments/medications taken']
@@ -196,7 +196,7 @@ Filtering based upon specific illnesses can be achieved using the :py:func:`filt
 .. code-block:: python
 
  # Load 'ukbio' object
- ukb = ukbiobank.ukbio.ukbio(ukb_csv=csv_path)
+ ukb = ukbiobank.ukbio(ukb_csv=csv_path)
 
  # Selecting self-reported illness as desired field  
  self_reported_illness_field = 20002
